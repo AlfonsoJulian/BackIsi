@@ -19,3 +19,7 @@ cursor.execute("""
 
 # Confirmar que la tabla se creó correctamente
 print("Tabla 'energy' creada o ya existe.")
+
+# Cerrar la conexión
+conn.commit()
+conn.close()
