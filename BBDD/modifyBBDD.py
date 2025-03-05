@@ -2,7 +2,7 @@
 import sqlite3
 
 # Conectar a la base de datos SQLite
-conn = sqlite3.connect('../energy.db')
+conn = sqlite3.connect('energy.db')
 
 # Crear un cursor para ejecutar comandos SQL
 cursor = conn.cursor()
