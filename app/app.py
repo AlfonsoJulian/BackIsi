@@ -1,5 +1,3 @@
-from BBDD import createBBDD, modifyBBDD, readBBDD
-
 from flask import Flask
 
 # Crear una instancia de la clase Flask
