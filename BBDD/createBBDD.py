@@ -11,8 +11,9 @@ cursor.execute("""
     CREATE TABLE IF NOT EXISTS energy (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         titulo TEXT,
-        autor TEXT,
-        precio REAL
+        pais TEXT,
+        precio REAL,
+        GWh REAL
     )
 """)
 
