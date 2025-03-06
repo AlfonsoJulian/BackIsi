@@ -1,3 +1,5 @@
+#Codigo ejemplo del uso de la api de electric map
+
 import requests
 import pandas as pd
 
