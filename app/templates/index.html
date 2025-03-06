@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Proyectos de Energía</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Lista de Proyectos de Energía</h1>
+        <a href="{{ url_for('add_project') }}" class="btn btn-primary mb-3">Agregar un Proyecto</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>País</th>
+                    <th>Precio</th>
+                    <th>GWh</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for project in bd_energy_projects %}
+                    <tr>
+                        <td>{{ project[0] }}</td>
+                        <td>{{ project[1] }}</td>
+                        <td>{{ project[2] }}</td>
+                        <td>${{ project[3] }}</td>
+                        <td>{{ project[4] }} GWh</td>
+                        <td>
+                            <a href="{{ url_for('delete_project', project_id=project[0]) }}" class="btn btn-danger">Eliminar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
