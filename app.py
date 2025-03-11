@@ -1,12 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 import requests
+import BBDD.scrapping.api_mix as api_mix
 
 app = Flask(__name__)
+db_name = "bd_energy.db"
 
 # Función para crear la base de datos y las tablas si no existen
 def init_db():
-    conn = sqlite3.connect('bd_energy.db')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     # Tabla existente para proyectos de energía
     cursor.execute("""
@@ -61,9 +63,9 @@ def init_db():
     conn.commit()
     conn.close()
 
-@app.route('/')
+@app.route('/templates')
 def index():
-    conn = sqlite3.connect('bd_energy.db')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM bd_energy")
     bd_energy_projects = cursor.fetchall()
@@ -78,7 +80,7 @@ def add_project():
         price = request.form['price']
         GWh = request.form['GWh']
         
-        conn = sqlite3.connect('bd_energy.db')
+        conn = sqlite3.connect(db_name)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO bd_energy (title, country, price, GWh) VALUES (?, ?, ?, ?)",
                        (title, country, price, GWh))
@@ -89,7 +91,7 @@ def add_project():
 
 @app.route('/delete/<int:project_id>', methods=['GET'])
 def delete_project(project_id):
-    conn = sqlite3.connect('bd_energy.db')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM bd_energy WHERE id = ?", (project_id,))
     conn.commit()
@@ -98,7 +100,7 @@ def delete_project(project_id):
 
 @app.route('/show_consumption')
 def show_consumption():
-    conn = sqlite3.connect('bd_energy.db')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM energy_consumption")
     consumption_data = cursor.fetchall()
@@ -107,7 +109,7 @@ def show_consumption():
 
 @app.route('/show_production')
 def show_production():
-    conn = sqlite3.connect('bd_energy.db')
+    conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM energy_production")
     production_data = cursor.fetchall()
@@ -117,68 +119,65 @@ def show_production():
 # Ruta para obtener datos de la API e insertarlos en las tablas de consumo y producción
 @app.route('/update_data')
 def update_data():
-    url = "https://api.electricitymap.org/v3/power-breakdown/latest?zone=IT"
-    headers = {"auth-token": "UaBrRwos3WkWtvqIN19d"}
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code == 200:
-        data = response.json()
-        zone = data.get("zone")
-        datetime_val = data.get("datetime")
-        consumption = data.get("powerConsumptionBreakdown", {})
-        production = data.get("powerProductionBreakdown", {})
-        
-        conn = sqlite3.connect('bd_energy.db')
-        cursor = conn.cursor()
-        
-        # Insertar datos en la tabla energy_consumption
-        cursor.execute("""
-            INSERT INTO energy_consumption 
-            (zone, datetime, nuclear, geothermal, biomass, coal, wind, solar, hydro, gas, oil, unknown, "hydro discharge", "battery discharge")
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            zone,
-            datetime_val,
-            consumption.get("nuclear"),
-            consumption.get("geothermal"),
-            consumption.get("biomass"),
-            consumption.get("coal"),
-            consumption.get("wind"),
-            consumption.get("solar"),
-            consumption.get("hydro"),
-            consumption.get("gas"),
-            consumption.get("oil"),
-            consumption.get("unknown"),
-            consumption.get("hydro discharge"),
-            consumption.get("battery discharge")
-        ))
-        
-        # Insertar datos en la tabla energy_production
-        cursor.execute("""
-            INSERT INTO energy_production 
-            (zone, datetime, nuclear, geothermal, biomass, coal, wind, solar, hydro, gas, oil, unknown, "hydro discharge", "battery discharge")
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            zone,
-            datetime_val,
-            production.get("nuclear"),
-            production.get("geothermal"),
-            production.get("biomass"),
-            production.get("coal"),
-            production.get("wind"),
-            production.get("solar"),
-            production.get("hydro"),
-            production.get("gas"),
-            production.get("oil"),
-            production.get("unknown"),
-            production.get("hydro discharge"),
-            production.get("battery discharge")
-        ))
-        conn.commit()
-        conn.close()
-        return "Datos de consumo y producción actualizados en la base de datos."
-    else:
+    # Obtener los datos de consumo y producción
+    consumption_data, production_data = api_mix.get_energy_mix()
+
+    if consumption_data is None or production_data is None:
         return "Error al obtener datos de la API."
+    
+    # Conectar a la base de datos
+    conn = sqlite3.connect(db_name)
+    cursor = conn.cursor()
+
+    # Insertar datos en la tabla energy_consumption
+    cursor.execute("""
+        INSERT INTO energy_consumption 
+        (zone, datetime, nuclear, geothermal, biomass, coal, wind, solar, hydro, gas, oil, unknown, "hydro discharge", "battery discharge")
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        consumption_data["zone"],
+        consumption_data["datetime"],
+        consumption_data["nuclear"],
+        consumption_data["geothermal"],
+        consumption_data["biomass"],
+        consumption_data["coal"],
+        consumption_data["wind"],
+        consumption_data["solar"],
+        consumption_data["hydro"],
+        consumption_data["gas"],
+        consumption_data["oil"],
+        consumption_data["unknown"],
+        consumption_data["hydro discharge"],
+        consumption_data["battery discharge"]
+    ))
+
+    # Insertar datos en la tabla energy_production
+    cursor.execute("""
+        INSERT INTO energy_production 
+        (zone, datetime, nuclear, geothermal, biomass, coal, wind, solar, hydro, gas, oil, unknown, "hydro discharge", "battery discharge")
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        production_data["zone"],
+        production_data["datetime"],
+        production_data["nuclear"],
+        production_data["geothermal"],
+        production_data["biomass"],
+        production_data["coal"],
+        production_data["wind"],
+        production_data["solar"],
+        production_data["hydro"],
+        production_data["gas"],
+        production_data["oil"],
+        production_data["unknown"],
+        production_data["hydro discharge"],
+        production_data["battery discharge"]
+    ))
+
+    # Confirmar los cambios y cerrar la conexión
+    conn.commit()
+    conn.close()
+
+    return "Datos de consumo y producción actualizados en la base de datos."
 
 # Inicializar la base de datos al arrancar la aplicación
 init_db()

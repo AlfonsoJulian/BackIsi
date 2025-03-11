@@ -73,3 +73,7 @@ mi_proyecto/
    ```
 
 4. Accede a la aplicación en tu navegador en la dirección [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
+
+### Notas de desarrollo
+
+- [Uso de dependencias](https://github.com/AlfonsoJulian/BackIsi/pull/20#issuecomment-2704798823)
