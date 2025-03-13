@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
-import requests
-import BBDD.scrapping.api_mix as api_mix
+import backend.scrapping.api_mix as api_mix  # OJO: importamos como api_mix
 
 app = Flask(__name__)
 db_name = "bd_energy.db"
@@ -10,16 +9,7 @@ db_name = "bd_energy.db"
 def init_db():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
-    # Tabla existente para proyectos de energía
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS bd_energy (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            country TEXT NOT NULL,
-            price REAL NOT NULL,
-            GWh REAL NOT NULL
-        )
-    """)
+
     # Nueva tabla para la mezcla energética de consumo
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS energy_consumption (
@@ -40,6 +30,7 @@ def init_db():
             "battery discharge" INTEGER
         )
     """)
+
     # Nueva tabla para la mezcla energética de producción
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS energy_production (
@@ -60,71 +51,50 @@ def init_db():
             "battery discharge" INTEGER
         )
     """)
+
     conn.commit()
     conn.close()
 
-@app.route('/templates')
+@app.route('/')
 def index():
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM bd_energy")
-    bd_energy_projects = cursor.fetchall()
-    conn.close()
-    return render_template('index.html', bd_energy_projects=bd_energy_projects)
-
-@app.route('/add', methods=['GET', 'POST'])
-def add_project():
-    if request.method == 'POST':
-        title = request.form['title']
-        country = request.form['country']
-        price = request.form['price']
-        GWh = request.form['GWh']
-        
-        conn = sqlite3.connect(db_name)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO bd_energy (title, country, price, GWh) VALUES (?, ?, ?, ?)",
-                       (title, country, price, GWh))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
-    return render_template('add_project.html')
-
-@app.route('/delete/<int:project_id>', methods=['GET'])
-def delete_project(project_id):
-    conn = sqlite3.connect(db_name)
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM bd_energy WHERE id = ?", (project_id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('index'))
+    # Simplemente renderizamos la plantilla 'index.html'
+    return render_template('index.html')
 
 @app.route('/show_consumption')
 def show_consumption():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
+
+    # Obtenemos todos los registros de la tabla 'energy_consumption'
     cursor.execute("SELECT * FROM energy_consumption")
     consumption_data = cursor.fetchall()
+
     conn.close()
+    # Pasamos los datos a la plantilla 'show_consumption.html'
     return render_template('show_consumption.html', consumption_data=consumption_data)
 
 @app.route('/show_production')
 def show_production():
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
+
+    # Obtenemos todos los registros de la tabla 'energy_production'
     cursor.execute("SELECT * FROM energy_production")
     production_data = cursor.fetchall()
+
     conn.close()
+    # Pasamos los datos a la plantilla 'show_production.html'
     return render_template('show_production.html', production_data=production_data)
 
 # Ruta para obtener datos de la API e insertarlos en las tablas de consumo y producción
 @app.route('/update_data')
 def update_data():
-    # Obtener los datos de consumo y producción
+    # Obtener los datos de consumo y producción desde api_mix
     consumption_data, production_data = api_mix.get_energy_mix()
 
     if consumption_data is None or production_data is None:
         return "Error al obtener datos de la API."
-    
+
     # Conectar a la base de datos
     conn = sqlite3.connect(db_name)
     cursor = conn.cursor()
@@ -183,4 +153,5 @@ def update_data():
 init_db()
 
 if __name__ == "__main__":
+    # Iniciar la aplicación Flask en modo debug
     app.run(debug=True)
