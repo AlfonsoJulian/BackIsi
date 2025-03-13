@@ -87,7 +87,7 @@ def show_production():
     return render_template('show_production.html', production_data=production_data)
 
 # Ruta para obtener datos de la API e insertarlos en las tablas de consumo y producción
-@app.route('/update_data')
+@app.route('/update_data', methods = ['POST'])
 def update_data():
     # Obtener los datos de consumo y producción desde api_mix
     consumption_data, production_data = api_mix.get_energy_mix()
