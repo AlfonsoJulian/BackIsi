@@ -30,4 +30,7 @@ def update_data():
 @routes.route('/update_prices', methods=['POST'])
 def update_prices():
     """Llama a EnergyService para actualizar los precios de electricidad."""
-    return energy_service.update_energy_prices()
+    if hasattr(energy_service, 'update_energy_prices'):
+        return energy_service.update_energy_prices()
+    return "Funcionalidad en desarrollo.", 501  # Código HTTP 501 Not Implemented
+
