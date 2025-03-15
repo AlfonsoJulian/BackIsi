@@ -54,16 +54,15 @@
         {% endfor %}
       </tbody>
     </table>
-    <a href="{{ url_for('index') }}" class="btn btn-primary">Volver</a>
+    <a href="{{ url_for('routes.index') }}" class="btn btn-primary">Volver</a>
   </div>
   <script>
     function updateData(){
-      fetch('{{ url_for("update_data") }}')
+        fetch('{{ url_for("routes.update_data") }}', { method: 'POST' })
         .then(response => response.text())
         .then(data => {
-          console.log(data);
-          // Recargar la página para mostrar los datos actualizados
-          location.reload();
+            console.log(data);
+            setTimeout(() => { location.reload(); }, 500); // Espera 500ms y recarga
         })
         .catch(error => console.error('Error al actualizar datos:', error));
     }
