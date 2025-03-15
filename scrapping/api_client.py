@@ -1,3 +1,4 @@
+from backend.models import EnergyMix
 import requests
 
 class EnergyAPIClient:
@@ -18,8 +19,8 @@ class EnergyAPIClient:
 
         data = response.json()
 
-        # Extrae la información relevante
-        consumption_data = data.get("powerConsumptionBreakdown", {})
-        production_data = data.get("powerProductionBreakdown", {})
+        # Convertir datos en objetos EnergyMix
+        consumption = EnergyMix(zone=zone, datetime=data.get("datetime"), **data["powerConsumptionBreakdown"])
+        production = EnergyMix(zone=zone, datetime=data.get("datetime"), **data["powerProductionBreakdown"])
 
-        return consumption_data, production_data
+        return consumption, production
