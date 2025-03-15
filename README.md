@@ -29,42 +29,36 @@ Evaluar si España puede competir globalmente como ubicación para grandes infra
 Este proyecto está estructurado de la siguiente manera:
 
 ```plaintext
-BackIsi/
+.
+├── app/          # 📌 Capa de presentación (Frontend y rutas Flask)
+│   ├── __init__.py
+│   ├── main.py   # 🎯 Punto de entrada de Flask
+│   ├── routes.py # 🚏 Define las rutas (endpoints HTTP)
+│   ├── static/   # 🎨 Archivos estáticos (CSS, JS, imágenes)
+│   ├── templates/ # 🖼 HTML de la aplicación
 │
-├── app/                 # Aplicación Flask
-│   ├── templates/       # Archivos HTML para las vistas
-│   │   ├── index.html              # Página principal con opciones
-│   │   ├── show_consumption.html    # Tabla de consumo de energía
-│   │   ├── show_production.html     # Tabla de producción de energía
-│   ├── static/          # Archivos estáticos como CSS y JS
-│   ├── routes.py        # Define las rutas de la aplicación Flask
-│   ├── main.py          # Archivo principal para ejecutar la app Flask
-│   ├── __init__.py      # Inicialización del módulo
+├── backend/      # 📌 Lógica de negocio (procesamiento de datos)
+│   ├── database.py # 📊 Manejo de la BD SQLite
+│   ├── energy_service.py # ⚡ Procesa datos de consumo/producción energética
+│   ├── models.py # 📦 Define estructuras de datos
 │
-├── backend/             # Lógica de negocio y acceso a la base de datos
-│   ├── database.py      # Gestión de la base de datos SQLite
-│   ├── energy_service.py # Servicio para obtener y procesar datos
-│   ├── models.py        # Definición de las clases de datos
-│   ├── __init__.py      # Inicialización del módulo
+├── data/         # 📌 Almacenamiento local de datos
+│   ├── bd_energy.db # 🗄 Base de datos SQLite
+│   ├── electricity_prices.csv # 📈 Precios de electricidad scrapados
 │
-├── scrapping/           # Módulo para obtener datos desde API y web scraping
-│   ├── api_client.py    # Cliente API para obtener datos de energía
-│   ├── scraping_prices.py # Web Scraping de precios de electricidad
-│   ├── __init__.py      # Inicialización del módulo
+├── scrapping/    # 📌 Obtención de datos externos (APIs y Scraping)
+│   ├── api_client.py # 🔗 Conexión con API de energía
+│   ├── scraping_prices.py # 🕷 Web scraping de precios eléctricos
 │
-├── data/                # Contiene archivos de datos
-│   ├── bd_energy.db     # Base de datos SQLite
-│   ├── electricity_prices.csv # Datos de precios de electricidad extraídos
+├── tests/        # 📌 Pruebas automáticas con pytest
+│   ├── test_api_client.py
+│   ├── test_database.py
+│   ├── test_energy_service.py
 │
-├── tests/               # Pruebas unitarias para el proyecto
-│   ├── test_api_client.py      # Pruebas para API de electricidad
-│   ├── test_database.py        # Pruebas para base de datos
-│   ├── test_energy_service.py  # Pruebas para servicios de energía
-│
-├── LICENSE              # Licencia del proyecto
-├── README.md            # Documentación del proyecto
-├── requirements.txt     # Dependencias necesarias para ejecutar el proyecto
-└── .gitignore           # Archivos y carpetas que deben ser ignorados por git
+├── requirements.txt # 📜 Dependencias del proyecto
+├── README.md        # 📖 Documentación del proyecto
+└── LICENSE          # ⚖ Licencia del proyecto
+
 ```
 
 ---
