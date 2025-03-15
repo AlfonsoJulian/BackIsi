@@ -1,28 +1,30 @@
+from backend.models import EnergyMix
 import sqlite3
 
 class DatabaseManager:
+    """Clase para interactuar con la base de datos SQLite."""
     def __init__(self, db_name="data/bd_energy.db"):
         self.db_name = db_name
 
     def execute_query(self, query, params=()):
-        """Ejecuta una consulta en la base de datos (INSERT, UPDATE, DELETE)."""
+        """Ejecuta consultas de modificación (INSERT, UPDATE, DELETE)."""
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-
-        # 🔥 Debug: Mostrar las tablas en la base de datos
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        print(f"Tablas en la BD {self.db_name}: {tables}")  # << Verificar si la tabla está creada
-
         cursor.execute(query, params)
         conn.commit()
         conn.close()
-    
-    def fetch_all(self, query):
-        """Ejecuta una consulta SELECT y devuelve todos los resultados."""
+
+    def fetch_all(self, query, params=()):
+        """Ejecuta consultas SELECT y devuelve el resultado."""
         conn = sqlite3.connect(self.db_name)
         cursor = conn.cursor()
-        cursor.execute(query)
+        cursor.execute(query, params)
         results = cursor.fetchall()
         conn.close()
         return results
+
+    def fetch_energy_consumption(self):
+        """Recupera datos de la BD y los devuelve como objetos EnergyMix."""
+        query = "SELECT * FROM energy_consumption"
+        results = self.fetch_all(query)
+        return [EnergyMix(*row) for row in results]  # Devuelve objetos en lugar de tuplas
