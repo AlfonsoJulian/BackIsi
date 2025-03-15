@@ -50,7 +50,7 @@ Este proyecto está estructurado de la siguiente manera:
 │   ├── api_client.py # 🔗 Conexión con API de energía
 │   ├── scraping_prices.py # 🕷 Web scraping de precios eléctricos
 │
-├── tests/        # 📌 Pruebas automáticas con pytest
+├── tests/        # 📌 Pruebas automáticas con pytest (python -m pytest tests/) para correrlos
 │   ├── test_api_client.py
 │   ├── test_database.py
 │   ├── test_energy_service.py

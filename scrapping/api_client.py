@@ -18,9 +18,17 @@ class EnergyAPIClient:
             return None, None
 
         data = response.json()
+        
 
-        # Convertir datos en objetos EnergyMix
-        consumption = EnergyMix(zone=zone, datetime=data.get("datetime"), **data["powerConsumptionBreakdown"])
-        production = EnergyMix(zone=zone, datetime=data.get("datetime"), **data["powerProductionBreakdown"])
+        def normalize_keys(d):
+            """Normaliza claves reemplazando espacios por guiones bajos."""
+            return {key.replace(" ", "_"): value for key, value in d.items()}
+
+        consumption_data = normalize_keys(data.get("powerConsumptionBreakdown", {}))
+        production_data = normalize_keys(data.get("powerProductionBreakdown", {}))
+
+       
+        consumption = EnergyMix(zone=zone, datetime=data.get("datetime"), **consumption_data)
+        production = EnergyMix(zone=zone, datetime=data.get("datetime"), **production_data)
 
         return consumption, production

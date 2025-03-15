@@ -25,6 +25,6 @@ class DatabaseManager:
 
     def fetch_energy_consumption(self):
         """Recupera datos de la BD y los devuelve como objetos EnergyMix."""
-        query = "SELECT * FROM energy_consumption"
+        query = "SELECT zone, datetime, nuclear, geothermal, biomass, coal, wind, solar, hydro, gas, oil, unknown, hydro_discharge, battery_discharge FROM energy_consumption"
         results = self.fetch_all(query)
-        return [EnergyMix(*row) for row in results]  # Devuelve objetos en lugar de tuplas
+        return [EnergyMix(*row) for row in results]  # Ahora excluye la columna `id`

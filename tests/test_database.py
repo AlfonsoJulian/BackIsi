@@ -1,13 +1,13 @@
 import pytest
 import sqlite3
 from backend.database import DatabaseManager
+from backend.models import EnergyMix
 
 @pytest.fixture
 def db():
     """Crea una base de datos persistente para pruebas y limpia después de cada test."""
     db = DatabaseManager("data/bd_energy.db")  # Usamos la base de datos real
 
-    # 🔥 Asegurar que la tabla existe antes del test
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -31,28 +31,32 @@ def db():
         """)
         conn.commit()
 
-    # 🔥 **Limpiar los datos antes de cada test**
     with sqlite3.connect(db.db_name) as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM energy_consumption;")  # Eliminar datos previos
+        cursor.execute("DELETE FROM energy_consumption;")  # Limpia la tabla antes de cada test
         conn.commit()
 
-    yield db  # Pasar la BD al test
+    yield db  # Devuelve la BD para los tests
 
 def test_insert_and_fetch_data(db):
-    """Prueba que los datos se insertan y se recuperan correctamente."""
+    """Prueba que los datos se insertan y se recuperan correctamente como objetos."""
+    
+    energy_mix = EnergyMix(
+        zone="IT", datetime="2025-03-10T16:00:00.000Z", nuclear=2000, geothermal=100, solar=500
+    )
+
     db.execute_query("""
-        INSERT INTO energy_consumption (zone, datetime, nuclear, solar)
-        VALUES (?, ?, ?, ?)
-    """, ("IT", "2025-03-10T16:00:00.000Z", 2000, 500))
+        INSERT INTO energy_consumption 
+        (zone, datetime, nuclear, geothermal, solar) 
+        VALUES (?, ?, ?, ?, ?)
+    """, (energy_mix.zone, energy_mix.datetime, energy_mix.nuclear, energy_mix.geothermal, energy_mix.solar))
 
-    results = db.fetch_all("SELECT * FROM energy_consumption")
+    results = db.fetch_energy_consumption()  # Ahora devuelve objetos EnergyMix
 
-    # 🔥 **Debugging**
-    print(f"Resultados en la BD: {results}")  # Para ver los datos insertados
-
-    assert len(results) == 1  # Ahora debería haber solo un registro
-    assert results[0][1] == "IT"
-    assert results[0][2] == "2025-03-10T16:00:00.000Z"
-    assert results[0][3] == 2000
-    assert results[0][8] == 500  # `solar` está en la columna 8
+    assert len(results) == 1
+    assert isinstance(results[0], EnergyMix)
+    assert results[0].zone == "IT"
+    assert results[0].datetime == "2025-03-10T16:00:00.000Z"
+    assert results[0].nuclear == 2000
+    assert results[0].geothermal == 100
+    assert results[0].solar == 500

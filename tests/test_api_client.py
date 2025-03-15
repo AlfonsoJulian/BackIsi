@@ -2,6 +2,7 @@ import pytest
 import requests
 from unittest.mock import patch
 from scrapping.api_client import EnergyAPIClient
+from backend.models import EnergyMix
 
 @pytest.fixture
 def api_client():
@@ -9,7 +10,7 @@ def api_client():
 
 @patch("requests.get")
 def test_get_energy_mix_success(mock_get, api_client):
-    """Prueba que la API devuelve datos correctamente."""
+    """Prueba que la API devuelve datos correctamente y se convierte en objetos EnergyMix."""
     mock_response = {
         "zone": "IT",
         "datetime": "2025-03-10T16:00:00.000Z",
@@ -22,14 +23,16 @@ def test_get_energy_mix_success(mock_get, api_client):
 
     consumption, production = api_client.get_energy_mix("IT")
 
-    assert consumption["nuclear"] == 2000
-    assert consumption["solar"] == 500
-    assert production["nuclear"] == 2100
-    assert production["solar"] == 600
+    assert isinstance(consumption, EnergyMix)
+    assert isinstance(production, EnergyMix)
+    assert consumption.nuclear == 2000
+    assert consumption.solar == 500
+    assert production.nuclear == 2100
+    assert production.solar == 600
 
 @patch("requests.get")
 def test_get_energy_mix_failure(mock_get, api_client):
-    """Prueba que la API maneja errores correctamente."""
+    """Prueba que la API maneja errores correctamente y devuelve None."""
     mock_get.return_value.status_code = 500
 
     consumption, production = api_client.get_energy_mix("IT")
