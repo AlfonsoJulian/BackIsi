@@ -1,71 +1,57 @@
 import requests
 import pandas as pd
 
-def get_energy_mix(zone="IT"):
-    # URL de la API y cabecera de autenticación
+def get_comparable_mix(zone="IT"):
     url = f"https://api.electricitymap.org/v3/power-breakdown/latest?zone={zone}"
-    headers = {"auth-token": "UaBrRwos3WkWtvqIN19d"}
+    headers = {"auth-token": "rzkgb31u0rPxQo8Zg1Um"}
+    resp = requests.get(url, headers=headers)
+    if resp.status_code != 200:
+        return None, None
 
-    # Realiza la solicitud GET
-    response = requests.get(url, headers=headers)
-    
-    if response.status_code != 200:
-        return None  # Devuelve None si la solicitud falla
+    data = resp.json()
+    ts = data["datetime"]
+    cons = data.get("powerConsumptionBreakdown", {})
+    prod = data.get("powerProductionBreakdown", {})
 
-    data = response.json()
+    # helper: si v es None devuelve 0.0
+    def safe(d, key):
+        v = d.get(key)
+        return 0.0 if v is None else v
 
-    # Extrae la información relevante
-    zone = data.get("zone")
-    datetime_value = data.get("datetime")
+    def extract(d):
+        coal       = safe(d, "coal")
+        oil        = safe(d, "oil")
+        gas        = safe(d, "gas")
+        nuclear    = safe(d, "nuclear")
+        renewables = sum(safe(d, k) for k in ["wind","solar","hydro","biomass","geothermal"])
+        total      = coal + oil + gas + nuclear + renewables
 
-    # Mezcla energética de consumo y producción
-    consumption = data.get("powerConsumptionBreakdown", {})
-    production = data.get("powerProductionBreakdown", {})
+        return {
+            "zone": zone,
+            "datetime": ts,
+            "Coal, peat and oil shale": coal,
+            "Oil products": oil,
+            "Natural gas": gas,
+            "Nuclear": nuclear,
+            "Renewables and waste": renewables,
+            "Total": total
+        }
 
-    #Preparamos los datos
-    consumption_data = {
-        "zone": zone,
-        "datetime": datetime_value,
-        "nuclear": consumption.get("nuclear", 0),
-        "geothermal": consumption.get("geothermal", 0),
-        "biomass": consumption.get("biomass", 0),
-        "coal": consumption.get("coal", 0),
-        "wind": consumption.get("wind", 0),
-        "solar": consumption.get("solar", 0),
-        "hydro": consumption.get("hydro", 0),
-        "gas": consumption.get("gas", 0),
-        "oil": consumption.get("oil", 0),
-        "unknown": consumption.get("unknown", 0),
-        "hydro discharge": consumption.get("hydro discharge", 0),
-        "battery discharge": consumption.get("battery discharge", 0),
-    }
+    return extract(cons), extract(prod)
 
-    production_data = {
-        "zone": zone,
-        "datetime": datetime_value,
-        "nuclear": production.get("nuclear", 0),
-        "geothermal": production.get("geothermal", 0),
-        "biomass": production.get("biomass", 0),
-        "coal": production.get("coal", 0),
-        "wind": production.get("wind", 0),
-        "solar": production.get("solar", 0),
-        "hydro": production.get("hydro", 0),
-        "gas": production.get("gas", 0),
-        "oil": production.get("oil", 0),
-        "unknown": production.get("unknown", 0),
-        "hydro discharge": production.get("hydro discharge", 0),
-        "battery discharge": production.get("battery discharge", 0),
-    }
 
-    return consumption_data, production_data
-
-# Llamada de demostración
 if __name__ == "__main__":
-    consumption_data, production_data = get_energy_mix()
+    cons, prod = get_comparable_mix("FR")  # p. ej. Francia
 
-    if consumption_data is None or production_data is None:
-        print("Error al obtener datos de la API.")
-        exit()
+    if cons is None:
+        print("Error al obtener datos de la API")
+        exit(1)
 
-    print("\nEnergy Mix Consumption:\n", pd.DataFrame([consumption_data]).to_string(index=False), "\n")
-    print("\nEnergy Mix Production:", pd.DataFrame([production_data]).to_string(index=False), "\n")
+    df_cons = pd.DataFrame([cons])
+    df_prod = pd.DataFrame([prod])
+
+    print("\n**Consumo** (MW):")
+    print(df_cons.to_string(index=False))
+
+    print("\n**Producción** (MW):")
+    print(df_prod.to_string(index=False))

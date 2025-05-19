@@ -66,14 +66,15 @@ df['precio_con_impuestos'] = df['precio_con_impuestos'] / 10000
 # === 6. Eliminar filas con NaN en columnas clave ===
 df = df.dropna(subset=['fecha', 'precio_sin_impuestos', 'precio_con_impuestos', 'pais'])
 
-# === 7. Eliminar duplicados ===
+# === 7. Eliminar filas de Francia ===
+df = df[df['pais'] != 'france']
+
+# === 8. Eliminar duplicados ===
 df = df.drop_duplicates()
 
-# === 8. Guardar en SQLite ===
+# === 9. Guardar en SQLite ===
 conn = sqlite3.connect(db_path)
-
 df.to_sql('precios', conn, if_exists='replace', index=False)
-
 conn.close()
 
-print(f"✅ Datos insertados correctamente en la tabla 'precios' de '{os.path.abspath(db_path)}'")
+print(f"✅ Datos insertados correctamente (sin Francia) en la tabla 'precios' de '{os.path.abspath(db_path)}'")
