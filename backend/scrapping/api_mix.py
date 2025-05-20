@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Obtiene mix de consumo y producción para FR, ES e IT y convierte
-las categorías de energía a minúscula y camelCase,
-mostrando los nombres completos de los países.
+Obtiene mix de consumo y producción para Francia, España e Italia,
+convierte las categorías de energía a camelCase, muestra nombres completos
+y transforma los valores de MW a PJ (por hora).
 """
 
 import requests
@@ -24,6 +24,9 @@ ZONE_NAMES = {
     "ES": "España",
     "IT": "Italia",
 }
+
+# Factor de conversión: 1 MW sostenido 1h → 3.6 GJ = 3.6e-6 PJ
+MWH_TO_PJ = 3.6e-6
 
 def to_camel_case(s: str) -> str:
     parts = re.findall(r'[A-Za-z0-9]+', s)
@@ -57,20 +60,30 @@ def get_comparable_mix(zone: str, auth_token: str):
             "nuclear": "Nuclear",
             "renewables": ["wind", "solar", "hydro", "biomass", "geothermal"]
         }
+        # zona y datetime sin convertir
         result = {
-            # aquí sustituimos la sigla por el nombre completo
             "zona": ZONE_NAMES.get(zone, zone),
             "datetime": ts
         }
+        # suma de renovables
         renew_sum = sum(safe(d, k) for k in mapping["renewables"])
+        # categorías simples
         for key in ["coal", "oil", "gas", "nuclear"]:
             cat = mapping[key]
             label = to_camel_case(cat)
             result[label] = safe(d, key)
+        # renovables
         label_ren = to_camel_case("Renewables and waste")
         result[label_ren] = renew_sum
+        # total
         total = sum(result[to_camel_case(mapping[k])] for k in ["coal", "oil", "gas", "nuclear"]) + renew_sum
         result[to_camel_case("Total")] = total
+
+        # CONVERTIR de MW a PJ (por hora)
+        for k, v in result.items():
+            if k not in ("zona", "datetime"):
+                result[k] = v * MWH_TO_PJ
+
         return result
 
     return extract(cons), extract(prod)
@@ -87,9 +100,10 @@ if __name__ == "__main__":
     df_cons = pd.DataFrame(all_cons)
     df_prod = pd.DataFrame(all_prod)
 
+    # Mostrar en ancho amplio
     pd.set_option("display.width", 120)
-    print("\n**Consumo** (MW):")
+    print("\n**Consumo** (PJ por hora):")
     print(df_cons.to_string(index=False))
 
-    print("\n**Producción** (MW):")
+    print("\n**Producción** (PJ por hora):")
     print(df_prod.to_string(index=False))
