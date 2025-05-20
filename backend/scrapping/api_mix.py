@@ -3,7 +3,8 @@
 
 """
 Obtiene mix de consumo y producción para FR, ES e IT y convierte
-las categorías de energía a minúscula y camelCase.
+las categorías de energía a minúscula y camelCase,
+mostrando los nombres completos de los países.
 """
 
 import requests
@@ -17,8 +18,14 @@ TOKENS = {
     "IT": "j0plnlEgjaTrNJGLXQOO",
 }
 
+# Mapeo de siglas a nombres completos
+ZONE_NAMES = {
+    "FR": "Francia",
+    "ES": "España",
+    "IT": "Italia",
+}
+
 def to_camel_case(s: str) -> str:
-    # Extrae palabras alfanuméricas
     parts = re.findall(r'[A-Za-z0-9]+', s)
     if not parts:
         return ''
@@ -51,19 +58,17 @@ def get_comparable_mix(zone: str, auth_token: str):
             "renewables": ["wind", "solar", "hydro", "biomass", "geothermal"]
         }
         result = {
-            "zone": zone,
+            # aquí sustituimos la sigla por el nombre completo
+            "zona": ZONE_NAMES.get(zone, zone),
             "datetime": ts
         }
-        # total renewables sum
         renew_sum = sum(safe(d, k) for k in mapping["renewables"])
-        # iterate simple keys
         for key in ["coal", "oil", "gas", "nuclear"]:
             cat = mapping[key]
             label = to_camel_case(cat)
             result[label] = safe(d, key)
         label_ren = to_camel_case("Renewables and waste")
         result[label_ren] = renew_sum
-        # total
         total = sum(result[to_camel_case(mapping[k])] for k in ["coal", "oil", "gas", "nuclear"]) + renew_sum
         result[to_camel_case("Total")] = total
         return result
@@ -88,4 +93,3 @@ if __name__ == "__main__":
 
     print("\n**Producción** (MW):")
     print(df_prod.to_string(index=False))
-
