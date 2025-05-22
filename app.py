@@ -4,7 +4,7 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os, re
+import os, re, runpy
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -13,46 +13,60 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# — tokens de la API
+TOKENS = {
+    "FR": "rzkgb31u0rPxQo8Zg1Um",
+    "ES": "cx1tJ4xxAOUOWcua0whK",
+    "IT": "j0plnlEgjaTrNJGLXQOO",
+}
+
+# — nombres que van pal tabla pais
+ZONE_NAMES = {
+    "FR": "francia",
+    "ES": "espana",
+    "IT": "italia",
+}
+
+# de MWh a PJ y pa' anualizar
+MWH_TO_PJ    = 3.6e-6
+HOUR_TO_YEAR = 24 * 365
 
 # --- MODELOS ---
 class Pais(db.Model):
     __tablename__ = 'pais'
     __table_args__ = {'extend_existing': True}
-    pais = db.Column(db.Text, primary_key=True)
-    pib_anual = db.Column(db.Text)
-    pib_per_capita = db.Column(db.Text)
-    co2_per_capita = db.Column(db.Text)
-    consumos = db.relationship('ActualConsumoProduccion', backref='pais_obj')
-    historicos = db.relationship('HistoricoConsumoProduccion', backref='pais_obj')
-
+    pais             = db.Column(db.Text, primary_key=True)
+    pib_anual        = db.Column(db.Text)
+    pib_per_capita   = db.Column(db.Text)
+    co2_per_capita   = db.Column(db.Text)
+    consumos         = db.relationship('ActualConsumoProduccion', backref='pais_obj')
+    historicos       = db.relationship('HistoricoConsumoProduccion', backref='pais_obj')
 
 class ActualConsumoProduccion(db.Model):
     __tablename__ = 'actual_consumo_produccion'
     __table_args__ = {'extend_existing': True}
-    pais = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
-    indicador = db.Column(db.Text, primary_key=True)
-    fecha = db.Column(db.Text, primary_key=True)
+    pais                 = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
+    indicador            = db.Column(db.Text, primary_key=True)
+    fecha                = db.Column(db.Text, primary_key=True)
     coal_peat_oil_shale  = db.Column(db.Text)
     natural_gas          = db.Column(db.Text)
     nuclear              = db.Column(db.Text)
     oil_products         = db.Column(db.Text)
     renewables_and_waste = db.Column(db.Text)
     total                = db.Column(db.Text)
-
 
 class HistoricoConsumoProduccion(db.Model):
     __tablename__ = 'historico_consumo_produccion'
     __table_args__ = {'extend_existing': True}
-    pais = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
-    indicador = db.Column(db.Text, primary_key=True)
-    anio = db.Column(db.Integer, primary_key=True)
+    pais                 = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
+    indicador            = db.Column(db.Text, primary_key=True)
+    anio                 = db.Column(db.Integer, primary_key=True)
     coal_peat_oil_shale  = db.Column(db.Text)
     natural_gas          = db.Column(db.Text)
     nuclear              = db.Column(db.Text)
     oil_products         = db.Column(db.Text)
     renewables_and_waste = db.Column(db.Text)
     total                = db.Column(db.Text)
-
 
 # --- UTILIDADES ---
 def safe_float(value):
@@ -63,11 +77,9 @@ def safe_float(value):
     except:
         return 0.0
 
-
 def parse_date_safe(date_str):
     if not date_str:
         return None
-    # manejar ISO con Z
     if isinstance(date_str, str) and date_str.endswith('Z'):
         date_str = date_str[:-1]
     for fmt in ('%Y-%m-%dT%H:%M:%S.%f',
@@ -79,18 +91,20 @@ def parse_date_safe(date_str):
             continue
     return None
 
-
 def get_year_from_date(date_value):
     if hasattr(date_value, 'year'):
         return date_value.year
     return None
 
+def to_camel_case(s: str) -> str:
+    parts = re.findall(r'[A-Za-z0-9]+', s)
+    parts = [p.lower() for p in parts]
+    return parts[0] + ''.join(p.title() for p in parts[1:]) if parts else ''
 
-# --- RUTAS ---
+# --- RUTAS PRINCIPALES ---
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/consumo', methods=['GET','POST'])
 def show_consumption():
@@ -103,17 +117,14 @@ def show_consumption():
                      HistoricoConsumoProduccion.anio
                  ).distinct().order_by(HistoricoConsumoProduccion.anio).all()]
 
-        # Cargamos actual_list sin autocambios en DB
         with db.session.no_autoflush:
             actual_list = ActualConsumoProduccion.query.order_by(
                               ActualConsumoProduccion.pais,
                               ActualConsumoProduccion.indicador,
                               ActualConsumoProduccion.fecha
                           ).all()
-            # Creamos atributo auxiliar en memoria
             for a in actual_list:
-                parsed = parse_date_safe(a.fecha)
-                a.fecha_parsed = parsed
+                a.fecha_parsed = parse_date_safe(a.fecha)
 
         historico_list = HistoricoConsumoProduccion.query.order_by(
                              HistoricoConsumoProduccion.pais,
@@ -181,6 +192,18 @@ def show_consumption():
         datos=datos
     )
 
+# --- NUEVA RUTA: ACTUALIZAR DATOS EN BD LLAMANDO DIRECTO AL SCRIPT ---
+@app.route('/update_consumo')
+def update_consumo():
+    # ruta absoluta a tu script
+    script_path = r'C:\Users\Usuario\Desktop\facultad\cuarto\2CUATRI\isi\practicas\BackIsi\backend\scrapping\api_mix.py'
+    try:
+        # ejecuta el script en el mismo proceso/Python
+        runpy.run_path(script_path, run_name="__main__")
+    except Exception as e:
+        return f"<h3>Error al actualizar:</h3><pre>{e}</pre>", 500
+
+    return "<h3>Datos actualizados correctamente llamando a api_mix.py.</h3>"
 
 if __name__ == "__main__":
     with app.app_context():
