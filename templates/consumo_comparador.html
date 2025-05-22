@@ -8,24 +8,35 @@
 <body>
   <div class="container my-4">
     <h1>Comparador de Consumo</h1>
-    <form method="post" class="form-inline mb-4">
+
+    <!-- Formulario de selección -->
+    <form method="post" action="{{ url_for('show_consumption') }}" class="form-inline mb-4">
       <label class="mr-2" for="pais">País:</label>
       <select id="pais" name="pais" class="form-control mr-3">
         {% for p in paises %}
-          <option value="{{p}}" {% if datos and datos.pais==p %}selected{% endif %}>{{p}}</option>
+          <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
         {% endfor %}
       </select>
 
       <label class="mr-2" for="indicador">Indicador:</label>
       <select id="indicador" name="indicador" class="form-control mr-3">
         {% for i in indicadores %}
-          <option value="{{i}}" {% if datos and datos.indicador==i %}selected{% endif %}>{{i}}</option>
+          <option value="{{ i }}" {% if datos and datos.indicador == i %}selected{% endif %}>{{ i }}</option>
+        {% endfor %}
+      </select>
+
+      <label class="mr-2" for="anio">Año histórico:</label>
+      <select id="anio" name="anio" class="form-control mr-3">
+        <option value="">(último disponible)</option>
+        {% for y in anios %}
+          <option value="{{ y }}" {% if datos and datos.fecha_actual.year == y %}selected{% endif %}>{{ y }}</option>
         {% endfor %}
       </select>
 
       <button class="btn btn-primary" type="submit">Comparar</button>
     </form>
 
+    <!-- Resultado específico -->
     {% if datos %}
       <h2>Resultados para {{ datos.pais }} — {{ datos.indicador }}</h2>
       <p>Fecha actual: {{ datos.fecha_actual.strftime('%Y-%m-%d') }}</p>
@@ -57,6 +68,57 @@
         </tbody>
       </table>
     {% endif %}
+
+    <!-- Listado de todos los consumos actuales -->
+    {% if actual_list %}
+      <h3>Todos los consumos actuales registrados</h3>
+      <table class="table table-sm table-striped mb-4">
+        <thead>
+          <tr>
+            <th>País</th>
+            <th>Indicador</th>
+            <th>Fecha</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in actual_list %}
+            <tr>
+              <td>{{ a.pais }}</td>
+              <td>{{ a.indicador }}</td>
+              <td>{{ a.fecha.strftime('%Y-%m-%d') }}</td>
+              <td>{{ a.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
+    <!-- Listado de todos los registros históricos -->
+    {% if historico_list %}
+      <h3>Todos los registros históricos</h3>
+      <table class="table table-sm table-striped">
+        <thead>
+          <tr>
+            <th>País</th>
+            <th>Indicador</th>
+            <th>Año</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in historico_list %}
+            <tr>
+              <td>{{ h.pais }}</td>
+              <td>{{ h.indicador }}</td>
+              <td>{{ h.anio }}</td>
+              <td>{{ h.total }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+
   </div>
 </body>
 </html>
