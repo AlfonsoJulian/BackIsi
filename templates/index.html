@@ -5,14 +5,462 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Proyectos de Energía</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Partículas de fondo */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, #00ffff, transparent);
+      border-radius: 50%;
+      animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Rayos de energía */
+    .energy-rays {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+    
+    .ray {
+      position: absolute;
+      width: 2px;
+      height: 200px;
+      background: linear-gradient(0deg, transparent, #00ffff, transparent);
+      animation: rayMove 8s infinite linear;
+      opacity: 0.6;
+    }
+    
+    @keyframes rayMove {
+      0% {
+        transform: translateX(-100px) rotate(45deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateX(calc(100vw + 100px)) rotate(45deg);
+        opacity: 0;
+      }
+    }
+    
+    .container {
+      position: relative;
+      z-index: 10;
+      animation: containerEntry 1.5s ease-out;
+    }
+    
+    @keyframes containerEntry {
+      0% {
+        transform: scale(0.3) rotateY(180deg);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) rotateY(0deg);
+        opacity: 1;
+      }
+    }
+    
+    h1 {
+      font-weight: 900;
+      font-size: 3.5rem;
+      text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff;
+      animation: titlePulse 3s ease-in-out infinite, titleFloat 6s ease-in-out infinite;
+      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 3s ease-in-out infinite, titleFloat 6s ease-in-out infinite, gradientText 4s ease infinite;
+      position: relative;
+    }
+    
+    @keyframes titlePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes titleFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes gradientText {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Gato épico */
+    .epic-cat {
+      position: absolute;
+      top: -80px;
+      right: -60px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      animation: catOrbit 10s linear infinite, catGlow 2s ease-in-out infinite alternate;
+      z-index: 15;
+      box-shadow: 0 0 30px #ff6b6b, 0 0 60px #ff6b6b;
+      border: 3px solid #fff;
+    }
+    
+    @keyframes catOrbit {
+      0% { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+      100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+    }
+    
+    @keyframes catGlow {
+      0% { box-shadow: 0 0 30px #ff6b6b, 0 0 60px #ff6b6b; }
+      100% { box-shadow: 0 0 50px #ff1744, 0 0 100px #ff1744; }
+    }
+    
+    .btn-group {
+      position: relative;
+      animation: buttonGroupRise 2s ease-out 0.5s both;
+    }
+    
+    @keyframes buttonGroupRise {
+      0% {
+        transform: translateY(100px) rotateX(-90deg);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0) rotateX(0deg);
+        opacity: 1;
+      }
+    }
+    
+    .btn {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.3rem;
+      padding: 15px 30px;
+      margin: 10px;
+      border: none;
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      animation: buttonFloat 4s ease-in-out infinite;
+    }
+    
+    .btn-success {
+      background: linear-gradient(45deg, #56ab2f 0%, #a8e6cf 100%);
+      animation: buttonFloat 4s ease-in-out infinite 2s;
+    }
+    
+    @keyframes buttonFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-8px) rotate(1deg); }
+      50% { transform: translateY(-15px) rotate(0deg); }
+      75% { transform: translateY(-8px) rotate(-1deg); }
+    }
+    
+    .btn:hover {
+      transform: scale(1.15) rotateZ(5deg);
+      box-shadow: 0 15px 35px rgba(0,255,255,0.4);
+      text-shadow: 0 0 20px #fff;
+    }
+    
+    .btn:active {
+      transform: scale(0.95);
+      animation: buttonPulse 0.3s ease;
+    }
+    
+    @keyframes buttonPulse {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(0.95); }
+    }
+    
+    /* Efecto de ondas al hacer hover */
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+    
+    .btn:hover::after {
+      width: 300px;
+      height: 300px;
+    }
+    
+    /* Efectos de resplandor para el fondo */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: orbFloat 15s ease-in-out infinite;
+    }
+    
+    .glow-orb:nth-child(1) {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0,255,255,0.3), transparent);
+      top: 20%;
+      left: 10%;
+      animation-delay: -5s;
+    }
+    
+    .glow-orb:nth-child(2) {
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(255,0,255,0.3), transparent);
+      top: 60%;
+      right: 15%;
+      animation-delay: -10s;
+    }
+    
+    .glow-orb:nth-child(3) {
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(255,255,0,0.3), transparent);
+      bottom: 20%;
+      left: 20%;
+      animation-delay: -2s;
+    }
+    
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      .epic-cat {
+        width: 80px;
+        height: 80px;
+        top: -50px;
+        right: -40px;
+      }
+      
+      .btn {
+        font-size: 1rem;
+        padding: 12px 25px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Partículas de fondo -->
+  <div class="particles"></div>
+  
+  <!-- Rayos de energía -->
+  <div class="energy-rays"></div>
+  
+  <!-- Orbes de resplandor -->
+  <div class="glow-orb"></div>
+  <div class="glow-orb"></div>
+  <div class="glow-orb"></div>
+  
   <div class="container text-center my-5">
+    <!-- Gato épico orbitando -->
+    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=120&h=120&fit=crop&crop=face" alt="Epic Cat" class="epic-cat">
+    
     <h1 class="mb-4">Lista de Proyectos de Energía</h1>
     <div class="btn-group" role="group" aria-label="Acciones">
       <a href="/consumo" class="btn btn-primary btn-lg">Comparador</a>
       <a href="/simulador" class="btn btn-success btn-lg">Simulador</a>
     </div>
   </div>
+
+  <script>
+    // Crear partículas dinámicas
+    function createParticles() {
+      const particlesContainer = document.querySelector('.particles');
+      
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    // Crear rayos de energía
+    function createEnergyRays() {
+      const raysContainer = document.querySelector('.energy-rays');
+      
+      for (let i = 0; i < 15; i++) {
+        const ray = document.createElement('div');
+        ray.className = 'ray';
+        ray.style.top = Math.random() * 100 + '%';
+        ray.style.animationDelay = Math.random() * 8 + 's';
+        ray.style.animationDuration = (Math.random() * 3 + 6) + 's';
+        ray.style.height = (Math.random() * 200 + 100) + 'px';
+        raysContainer.appendChild(ray);
+      }
+    }
+    
+    // Efecto de click épico en los botones
+    function addEpicClickEffect() {
+      const buttons = document.querySelectorAll('.btn');
+      
+      buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+          // Crear explosión de partículas
+          for (let i = 0; i < 20; i++) {
+            const spark = document.createElement('div');
+            spark.style.position = 'absolute';
+            spark.style.left = e.clientX + 'px';
+            spark.style.top = e.clientY + 'px';
+            spark.style.width = '4px';
+            spark.style.height = '4px';
+            spark.style.background = '#00ffff';
+            spark.style.borderRadius = '50%';
+            spark.style.pointerEvents = 'none';
+            spark.style.zIndex = '9999';
+            
+            const angle = (Math.PI * 2 * i) / 20;
+            const velocity = Math.random() * 100 + 50;
+            
+            spark.style.animation = `sparkFly 1s ease-out forwards`;
+            spark.style.transform = `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px)`;
+            
+            document.body.appendChild(spark);
+            
+            setTimeout(() => {
+              spark.remove();
+            }, 1000);
+          }
+        });
+      });
+    }
+    
+    // Añadir animación de chispas
+    const sparkStyle = document.createElement('style');
+    sparkStyle.textContent = `
+      @keyframes sparkFly {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--x, 0), var(--y, 0)) scale(0);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(sparkStyle);
+    
+    // Inicializar efectos
+    document.addEventListener('DOMContentLoaded', function() {
+      createParticles();
+      createEnergyRays();
+      addEpicClickEffect();
+      
+      // Recrear partículas periódicamente para mantener el efecto
+      setInterval(createParticles, 30000);
+      setInterval(createEnergyRays, 25000);
+    });
+    
+    // Efecto de movimiento del mouse
+    document.addEventListener('mousemove', function(e) {
+      const orbs = document.querySelectorAll('.glow-orb');
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      
+      orbs.forEach((orb, index) => {
+        const speed = (index + 1) * 0.02;
+        const x = (mouseX - 0.5) * 50 * speed;
+        const y = (mouseY - 0.5) * 50 * speed;
+        orb.style.transform = `translate(${x}px, ${y}px) scale(${1 + speed})`;
+      });
+    });
+  </script>
 </body>
 </html>
