@@ -9,6 +9,22 @@
   <div class="container my-4">
     <h1>Comparador de Consumo</h1>
 
+    <!-- Botón para actualizar datos: bandera de España -->
+    <a href="{{ url_for('update_consumo') }}"
+       class="btn mb-4"
+       style="
+         background: linear-gradient(
+           to right,
+           #AA151B 0%, #AA151B 33%,
+           #F1BF00 33%, #F1BF00 66%,
+           #AA151B 66%, #AA151B 100%
+         );
+         color: white;
+         border: 1px solid #AA151B;
+       ">
+      Actualizar Consumo
+    </a>
+
     <!-- Formulario -->
     <form method="post" action="{{ url_for('show_consumption') }}" class="form-inline mb-4">
       <label for="pais" class="mr-2">País:</label>
@@ -45,7 +61,7 @@
           <tr>
             <th>Tipo</th>
             <th>Actual</th>
-            <th>Histórico</th>
+            <th>Histórico ({{ datos.fecha_actual.year }})</th>
             <th>Diferencia</th>
           </tr>
         </thead>

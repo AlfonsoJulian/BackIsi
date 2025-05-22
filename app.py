@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from decimal import Decimal       # <— Asegúrate de tener esto
 import os, re, runpy
 
 app = Flask(__name__)
@@ -13,34 +11,37 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# — tokens de la API
-TOKENS = {
-    "FR": "rzkgb31u0rPxQo8Zg1Um",
-    "ES": "cx1tJ4xxAOUOWcua0whK",
-    "IT": "j0plnlEgjaTrNJGLXQOO",
-}
-
-# — nombres que van pal tabla pais
-ZONE_NAMES = {
-    "FR": "francia",
-    "ES": "espana",
-    "IT": "italia",
-}
 
 # de MWh a PJ y pa' anualizar
 MWH_TO_PJ    = 3.6e-6
 HOUR_TO_YEAR = 24 * 365
 
-# --- MODELOS ---
+
+class HistoricoPrecio(db.Model):
+    __tablename__ = 'historico_precio'
+    __table_args__ = {'extend_existing': True}
+
+    pais               = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
+    anio               = db.Column(db.Integer, primary_key=True)
+    precio_kw_impuesto = db.Column(db.Numeric(20, 8))
+    precio_kw          = db.Column(db.Numeric(20, 8))
+
+    pais_obj = db.relationship('Pais', backref='historico_precio')
+
+
+# --- Ajuste en Pais: añadir relación al nuevo modelo ---
 class Pais(db.Model):
     __tablename__ = 'pais'
     __table_args__ = {'extend_existing': True}
+
     pais             = db.Column(db.Text, primary_key=True)
     pib_anual        = db.Column(db.Text)
     pib_per_capita   = db.Column(db.Text)
     co2_per_capita   = db.Column(db.Text)
+
     consumos         = db.relationship('ActualConsumoProduccion', backref='pais_obj')
     historicos       = db.relationship('HistoricoConsumoProduccion', backref='pais_obj')
+    precios_historico = db.relationship('HistoricoPrecio', backref='pais_obj')
 
 class ActualConsumoProduccion(db.Model):
     __tablename__ = 'actual_consumo_produccion'
@@ -191,6 +192,7 @@ def show_consumption():
         historico_list=historico_list,
         datos=datos
     )
+
 
 # --- NUEVA RUTA: ACTUALIZAR DATOS EN BD LLAMANDO DIRECTO AL SCRIPT ---
 @app.route('/update_consumo')
