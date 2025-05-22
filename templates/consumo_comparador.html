@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comparador Consumo Actual vs Histórico</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container my-4">
+    <h1>Comparador de Consumo</h1>
+    <form method="post" class="form-inline mb-4">
+      <label class="mr-2" for="pais">País:</label>
+      <select id="pais" name="pais" class="form-control mr-3">
+        {% for p in paises %}
+          <option value="{{p}}" {% if datos and datos.pais==p %}selected{% endif %}>{{p}}</option>
+        {% endfor %}
+      </select>
+
+      <label class="mr-2" for="indicador">Indicador:</label>
+      <select id="indicador" name="indicador" class="form-control mr-3">
+        {% for i in indicadores %}
+          <option value="{{i}}" {% if datos and datos.indicador==i %}selected{% endif %}>{{i}}</option>
+        {% endfor %}
+      </select>
+
+      <button class="btn btn-primary" type="submit">Comparar</button>
+    </form>
+
+    {% if datos %}
+      <h2>Resultados para {{ datos.pais }} — {{ datos.indicador }}</h2>
+      <p>Fecha actual: {{ datos.fecha_actual.strftime('%Y-%m-%d') }}</p>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Actual</th>
+            <th>Histórico ({{ datos.fecha_actual.year }})</th>
+            <th>Diferencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, actual in datos.valores_actual.items() %}
+            {% set historico = datos.valores_historico[key] if datos.valores_historico else None %}
+            <tr>
+              <td>{{ key.replace('_',' ').capitalize() }}</td>
+              <td>{{ actual }}</td>
+              <td>{{ historico or '—' }}</td>
+              <td>
+                {% if historico %}
+                  {{ (actual - historico) }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </div>
+</body>
+</html>
