@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Comparador Consumo Actual vs Histórico</title>
+  <title>🚀 Comparador Consumo ÉPICO ⚡</title>
   <!-- Bootstrap 5 CSS -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -13,276 +13,646 @@
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
+    
+    * {
+      box-sizing: border-box;
     }
     
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: linear-gradient(45deg, #0f0f23, #1a1a3e, #2d1b69, #0f0f23);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Partículas de fondo */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+      border-radius: 50%;
+      animation: particleFloat 15s linear infinite;
+      opacity: 0.7;
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    /* Hero épico */
     .hero {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      height: 300px;
+      background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+      background-size: 400% 400%;
+      animation: heroGradient 6s ease infinite;
+      height: 400px;
       position: relative;
       color: #fff;
-      border-radius: 0 0 30px 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border-radius: 0 0 50px 50px;
+      box-shadow: 0 20px 60px rgba(255, 0, 110, 0.4);
       margin-bottom: 3rem;
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+    
+    @keyframes heroGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: rotate 8s linear infinite;
+    }
+    
+    @keyframes rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     
     .hero-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 0 0 30px 30px;
+      background: radial-gradient(circle at center, rgba(0,0,0,0.2), rgba(0,0,0,0.6));
+      border-radius: 0 0 50px 50px;
     }
     
     .hero-content {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       top: 50%;
       transform: translateY(-50%);
       text-align: center;
+      animation: heroContentFloat 4s ease-in-out infinite;
+    }
+    
+    @keyframes heroContentFloat {
+      0%, 100% { transform: translateY(-50%); }
+      50% { transform: translateY(-60%); }
     }
     
     .hero h1 {
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      text-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.8),
+        0 0 20px rgba(255, 0, 110, 0.6),
+        0 0 30px rgba(131, 56, 236, 0.4);
       margin-bottom: 1rem;
-      font-size: 3rem;
+      font-size: 4rem;
+      background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGradient 3s ease infinite;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .hero h1:hover {
+      transform: scale(1.1) rotateX(10deg);
+      filter: drop-shadow(0 10px 20px rgba(255, 0, 110, 0.5));
+    }
+    
+    @keyframes textGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     
     .hero .lead {
-      font-size: 1.4rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      font-size: 1.6rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
     }
     
     .main-container {
-      margin-top: -50px;
+      margin-top: -80px;
       position: relative;
-      z-index: 2;
+      z-index: 3;
       padding-left: 2rem;
       padding-right: 2rem;
     }
     
+    /* Cards épicas */
     .card {
       border: none;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.95);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       margin: 0 10px 2rem 10px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.6s ease;
+      opacity: 0;
+    }
+    
+    .card:hover::before {
+      opacity: 1;
+      animation: cardShine 1.5s ease-in-out;
+    }
+    
+    @keyframes cardShine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
     }
     
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      transform: translateY(-15px) rotateX(5deg) scale(1.02);
+      box-shadow: 
+        0 25px 50px rgba(255, 0, 110, 0.3),
+        0 0 0 1px rgba(255,255,255,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+      border-color: rgba(255, 0, 110, 0.5);
     }
     
     .card-body {
-      padding: 2rem;
+      padding: 2.5rem;
+      position: relative;
+      z-index: 2;
     }
     
     .card-title {
-      color: #2c3e50;
-      font-weight: 600;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 1.5rem;
+      gap: 15px;
+      margin-bottom: 2rem;
+      font-size: 1.4rem;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
     
     .form-label {
-      font-weight: 500;
-      color: #34495e;
+      font-weight: 600;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      transition: all 0.3s ease;
     }
     
     .form-control, .form-select {
-      border: 2px solid #e8ecef;
-      border-radius: 12px;
-      padding: 12px 16px;
-      transition: all 0.3s ease;
-      background: rgba(255,255,255,0.9);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      font-weight: 500;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       margin-right: 1rem;
       margin-bottom: 1rem;
+      position: relative;
+    }
+    
+    .form-control::placeholder {
+      color: rgba(255,255,255,0.7);
     }
     
     .form-control:focus, .form-select:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-      background: #fff;
+      border-color: #ff006e;
+      box-shadow: 
+        0 0 0 0.2rem rgba(255, 0, 110, 0.3),
+        0 4px 15px rgba(255, 0, 110, 0.2);
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-2px);
+      outline: none;
     }
     
+    .form-control option, .form-select option {
+      background: #1a1a3e;
+      color: #fff;
+    }
+    
+    /* Botones épicos */
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
       border: none;
-      border-radius: 15px;
-      padding: 12px 25px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      border-radius: 25px;
+      padding: 15px 30px;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 
+        0 8px 25px rgba(255, 0, 110, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: all 0.6s ease;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
     }
     
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 
+        0 15px 35px rgba(255, 0, 110, 0.6),
+        0 0 0 1px rgba(255,255,255,0.3);
+      background: linear-gradient(135deg, #ff0080 0%, #9d4edd 50%, #4361ee 100%);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(-2px) scale(1.02);
+      animation: buttonPulse 0.3s ease;
+    }
+    
+    @keyframes buttonPulse {
+      0% { transform: translateY(-2px) scale(1.02); }
+      50% { transform: translateY(-2px) scale(1.08); }
+      100% { transform: translateY(-2px) scale(1.02); }
     }
     
     .btn-spain {
-      background: linear-gradient(
-        to right,
-        #AA151B 0%, #AA151B 33%,
-        #F1BF00 33%, #F1BF00 66%,
-        #AA151B 66%, #AA151B 100%
-      );
+      background: linear-gradient(135deg, #AA151B 0%, #F1BF00 50%, #AA151B 100%);
+      background-size: 200% 200%;
+      animation: spanishFlag 3s ease infinite;
       color: white;
-      border: 2px solid #AA151B;
-      border-radius: 15px;
-      padding: 12px 25px;
-      font-weight: 600;
+      border: 3px solid #AA151B;
+      border-radius: 25px;
+      padding: 15px 30px;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
       text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(170, 21, 27, 0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 
+        0 8px 25px rgba(170, 21, 27, 0.4),
+        inset 0 1px 0 rgba(255,255,255,0.2);
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes spanishFlag {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     
     .btn-spain:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(170, 21, 27, 0.4);
+      transform: translateY(-8px) rotateX(10deg) scale(1.1);
+      box-shadow: 
+        0 20px 40px rgba(170, 21, 27, 0.6),
+        0 0 30px rgba(241, 191, 0, 0.4);
       color: white;
       text-decoration: none;
+      animation: spanishFlagFast 1s ease infinite;
     }
     
+    @keyframes spanishFlagFast {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    
+    /* Tablas épicas */
     .table {
-      background: rgba(255,255,255,0.9);
-      border-radius: 15px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
       margin-bottom: 2rem;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     
     .table thead th {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
       color: white;
       border: none;
-      font-weight: 600;
-      padding: 1rem;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+      padding: 1.5rem;
       text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      position: relative;
+    }
+    
+    .table thead th::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: headerShine 2s ease infinite;
+    }
+    
+    @keyframes headerShine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
     
     .table tbody td {
-      padding: 0.8rem 1rem;
+      padding: 1.2rem;
       border: none;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      transition: background-color 0.3s ease;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+      color: #fff;
+      font-weight: 500;
+      background: rgba(255,255,255,0.02);
+    }
+    
+    .table tbody tr {
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
     
     .table tbody tr:hover {
-      background-color: rgba(102, 126, 234, 0.1);
+      background: linear-gradient(90deg, rgba(255, 0, 110, 0.1), rgba(131, 56, 236, 0.1));
+      transform: scale(1.02);
+      box-shadow: 0 4px 15px rgba(255, 0, 110, 0.2);
     }
     
     .table-striped tbody tr:nth-of-type(odd) {
-      background-color: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.03);
     }
     
+    /* Sección de resultados */
     .results-section {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-      border-radius: 20px;
-      padding: 2rem;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.1) 0%, rgba(255, 0, 255, 0.1) 100%);
+      backdrop-filter: blur(20px);
+      border-radius: 30px;
+      padding: 2.5rem;
       margin-bottom: 2rem;
-      color: #2c3e50;
+      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+      animation: resultsGlow 4s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes resultsGlow {
+      0%, 100% { 
+        box-shadow: 
+          0 8px 32px rgba(0,0,0,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2),
+          0 0 20px rgba(0, 255, 255, 0.3);
+      }
+      50% { 
+        box-shadow: 
+          0 8px 32px rgba(0,0,0,0.3),
+          inset 0 1px 0 rgba(255,255,255,0.2),
+          0 0 30px rgba(255, 0, 255, 0.4);
+      }
     }
     
     .results-title {
-      color: #2c3e50;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
       font-weight: 700;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      font-size: 1.8rem;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
     
     .date-info {
-      background: rgba(255,255,255,0.8);
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 1rem 1.5rem;
+      border-radius: 20px;
       display: inline-block;
-      margin-bottom: 1.5rem;
-      font-weight: 500;
+      margin-bottom: 2rem;
+      font-weight: 600;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     
+    /* Iconos flotantes épicos */
     .floating-icon {
       position: absolute;
-      opacity: 0.1;
-      font-size: 8rem;
-      color: white;
-      animation: float 6s ease-in-out infinite;
+      font-size: 12rem;
+      background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: floatEpic 8s ease-in-out infinite, gradientIcon 6s ease infinite;
+      opacity: 0.15;
+      z-index: 1;
     }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
+    @keyframes floatEpic {
+      0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+      25% { transform: translateY(-30px) rotate(90deg) scale(1.1); }
+      50% { transform: translateY(0px) rotate(180deg) scale(1.2); }
+      75% { transform: translateY(-20px) rotate(270deg) scale(1.1); }
     }
     
-    .icon-1 { top: 20%; left: 10%; animation-delay: 0s; }
-    .icon-2 { top: 60%; right: 15%; animation-delay: 2s; }
-    .icon-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+    @keyframes gradientIcon {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .icon-1 { top: 15%; left: 8%; animation-delay: 0s; }
+    .icon-2 { top: 50%; right: 10%; animation-delay: 2s; }
+    .icon-3 { bottom: 15%; left: 15%; animation-delay: 4s; }
     
     .section-title {
-      color: #2c3e50;
-      font-weight: 600;
-      margin: 2rem 0 1.5rem 0;
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+      font-weight: 700;
+      margin: 3rem 0 2rem 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      font-size: 1.6rem;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
     }
     
     .form-row {
       display: flex;
       flex-wrap: wrap;
       align-items: end;
-      gap: 1rem;
-      background: rgba(255,255,255,0.9);
-      padding: 2rem;
-      border-radius: 20px;
+      gap: 1.5rem;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      padding: 2.5rem;
+      border-radius: 30px;
       margin-bottom: 2rem;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
     }
     
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.8rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group:hover {
+      transform: translateY(-3px);
     }
     
     .form-group label {
       margin-bottom: 0;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
     
     .badge-difference {
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      font-weight: 600;
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      cursor: pointer;
     }
     
-    .positive { background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%); color: #2d5a3d; }
-    .negative { background: linear-gradient(135deg, #ffd3e1 0%, #fd9eb8 100%); color: #8b1538; }
-    .neutral { background: linear-gradient(135deg, #e8ecef 0%, #d1d9e0 100%); color: #495057; }
+    .badge-difference:hover {
+      transform: scale(1.1) rotateZ(5deg);
+    }
+    
+    .positive { 
+      background: linear-gradient(135deg, #06ffa5 0%, #00d4aa 100%); 
+      color: #003d2a; 
+      box-shadow: 0 4px 15px rgba(6, 255, 165, 0.3);
+    }
+    .negative { 
+      background: linear-gradient(135deg, #ff006e 0%, #d90429 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 15px rgba(255, 0, 110, 0.3);
+    }
+    .neutral { 
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%); 
+      color: #fff; 
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+    }
+    
+    /* Efectos de cursor */
+    .cursor-trail {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 0, 110, 0.8), transparent);
+      pointer-events: none;
+      z-index: 9999;
+      animation: cursorFade 1s ease-out forwards;
+    }
+    
+    @keyframes cursorFade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .floating-icon { font-size: 6rem; }
+      .form-row { flex-direction: column; }
+      .form-group { width: 100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Partículas de fondo -->
+  <div class="particles" id="particles"></div>
+
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1 class="display-4">📊 Comparador de Consumo ⚡</h1>
-      <p class="lead">Análisis detallado de consumo actual vs histórico</p>
+      <h1 class="display-4" onmouseenter="playHoverSound()">🚀 COMPARADOR DE CONSUMO ÉPICO ⚡</h1>
+      <p class="lead">💥 Análisis Ultra-Dinámico de Consumo Actual vs Histórico 💥</p>
     </div>
     <!-- Floating Icons -->
     <i class="bi bi-graph-up-arrow floating-icon icon-1"></i>
@@ -294,26 +664,26 @@
     
     <!-- Botón de actualización -->
     <div class="text-center mb-4">
-      <a href="{{ url_for('update_consumo') }}" class="btn-spain">
+      <a href="{{ url_for('update_consumo') }}" class="btn-spain" onmouseenter="playButtonSound()">
         <i class="bi bi-arrow-clockwise"></i>
-        🇪🇸 Actualizar Consumo España
+        🇪🇸 ACTUALIZAR CONSUMO ESPAÑA 🚀
       </a>
     </div>
 
     <!-- Formulario -->
-    <div class="card">
+    <div class="card" onmouseenter="playCardSound()">
       <div class="card-body">
         <h5 class="card-title">
           <i class="bi bi-sliders text-primary"></i>
-          🔍 Parámetros de Comparación
+          🔍 PARÁMETROS DE COMPARACIÓN ÉPICOS
         </h5>
         <form method="post" action="{{ url_for('show_consumption') }}" class="form-row">
           <div class="form-group">
             <label for="pais" class="form-label">
               <i class="bi bi-globe-americas text-success"></i>
-              País
+              🌍 País
             </label>
-            <select id="pais" name="pais" class="form-control">
+            <select id="pais" name="pais" class="form-control" onmouseenter="playSelectSound()">
               {% for p in paises %}
                 <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
               {% endfor %}
@@ -323,9 +693,9 @@
           <div class="form-group">
             <label for="indicador" class="form-label">
               <i class="bi bi-speedometer2 text-warning"></i>
-              Indicador
+              ⚡ Indicador
             </label>
-            <select id="indicador" name="indicador" class="form-control">
+            <select id="indicador" name="indicador" class="form-control" onmouseenter="playSelectSound()">
               {% for i in indicadores %}
                 <option value="{{ i }}" {% if datos and datos.indicador == i %}selected{% endif %}>{{ i }}</option>
               {% endfor %}
@@ -335,9 +705,9 @@
           <div class="form-group">
             <label for="anio" class="form-label">
               <i class="bi bi-calendar3 text-info"></i>
-              Año histórico
+              📅 Año histórico
             </label>
-            <select id="anio" name="anio" class="form-control">
+            <select id="anio" name="anio" class="form-control" onmouseenter="playSelectSound()">
               <option value="">📅 (último disponible)</option>
               {% for y in anios %}
                 <option value="{{ y }}" {% if datos and datos.fecha_actual.year == y %}selected{% endif %}>{{ y }}</option>
@@ -346,9 +716,9 @@
           </div>
 
           <div class="form-group">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary" onmouseenter="playButtonSound()" onclick="playClickSound()">
               <i class="bi bi-search me-2"></i>
-              ✨ Comparar Datos
+              ✨ COMPARAR DATOS ÉPICAMENTE
             </button>
           </div>
         </form>
@@ -357,10 +727,10 @@
 
     <!-- Resultados específicos -->
     {% if datos %}
-      <div class="results-section">
+      <div class="results-section" onmouseenter="playResultSound()">
         <h2 class="results-title">
           <i class="bi bi-graph-up text-primary"></i>
-          📈 Resultados para {{ datos.pais }} — {{ datos.indicador }}
+          📈 RESULTADOS ÉPICOS para {{ datos.pais }} — {{ datos.indicador }}
         </h2>
         <div class="date-info">
           <i class="bi bi-calendar-check text-success me-2"></i>
@@ -371,16 +741,16 @@
           <table class="table">
             <thead>
               <tr>
-                <th><i class="bi bi-tag me-2"></i>Tipo</th>
-                <th><i class="bi bi-clock me-2"></i>Actual</th>
-                <th><i class="bi bi-archive me-2"></i>Histórico ({{ datos.fecha_actual.year }})</th>
-                <th><i class="bi bi-calculator me-2"></i>Diferencia</th>
+                <th onmouseenter="playHeaderSound()"><i class="bi bi-tag me-2"></i>Tipo</th>
+                <th onmouseenter="playHeaderSound()"><i class="bi bi-clock me-2"></i>Actual</th>
+                <th onmouseenter="playHeaderSound()"><i class="bi bi-archive me-2"></i>Histórico ({{ datos.fecha_actual.year }})</th>
+                <th onmouseenter="playHeaderSound()"><i class="bi bi-calculator me-2"></i>Diferencia</th>
               </tr>
             </thead>
             <tbody>
               {% for key, val in datos.valores_actual.items() %}
                 {% set hist = datos.valores_historico[key] if datos.valores_historico else None %}
-                <tr>
+                <tr onmouseenter="playRowSound()">
                   <td><strong>{{ key.replace('_',' ').capitalize() }}</strong></td>
                   <td>{{ val }}</td>
                   <td>{{ hist or '—' }}</td>
@@ -388,14 +758,14 @@
                     {% if hist is not none %}
                       {% set diff = val - hist %}
                       {% if diff > 0 %}
-                        <span class="badge-difference positive">+{{ diff }}</span>
+                        <span class="badge-difference positive" onmouseenter="playBadgeSound()">+{{ diff }}</span>
                       {% elif diff < 0 %}
-                        <span class="badge-difference negative">{{ diff }}</span>
+                        <span class="badge-difference negative" onmouseenter="playBadgeSound()">{{ diff }}</span>
                       {% else %}
-                        <span class="badge-difference neutral">{{ diff }}</span>
+                        <span class="badge-difference neutral" onmouseenter="playBadgeSound()">{{ diff }}</span>
                       {% endif %}
                     {% else %}
-                      <span class="badge-difference neutral">N/A</span>
+                      <span class="badge-difference neutral" onmouseenter="playBadgeSound()">N/A</span>
                     {% endif %}
                   </td>
                 </tr>
@@ -410,21 +780,21 @@
     {% if actual_list %}
       <h3 class="section-title">
         <i class="bi bi-lightning-fill text-warning"></i>
-        ⚡ Todos los consumos actuales registrados
+        ⚡ TODOS LOS CONSUMOS ACTUALES REGISTRADOS
       </h3>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th><i class="bi bi-geo-alt me-2"></i>País</th>
-              <th><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
-              <th><i class="bi bi-calendar me-2"></i>Fecha</th>
-              <th><i class="bi bi-sum me-2"></i>Total</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-geo-alt me-2"></i>País</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-calendar me-2"></i>Fecha</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-sum me-2"></i>Total</th>
             </tr>
           </thead>
           <tbody>
             {% for a in actual_list %}
-              <tr>
+              <tr onmouseenter="playRowSound()">
                 <td><strong>{{ a.pais }}</strong></td>
                 <td>{{ a.indicador }}</td>
                 <td>
@@ -434,7 +804,7 @@
                     {{ a.fecha[:10] }}
                   {% endif %}
                 </td>
-                <td><span class="badge bg-primary rounded-pill">{{ a.total }}</span></td>
+                <td><span class="badge bg-primary rounded-pill" onmouseenter="playBadgeSound()">{{ a.total }}</span></td>
               </tr>
             {% endfor %}
           </tbody>
@@ -446,25 +816,25 @@
     {% if historico_list %}
       <h3 class="section-title">
         <i class="bi bi-archive-fill text-secondary"></i>
-        📚 Todos los registros históricos
+        📚 TODOS LOS REGISTROS HISTÓRICOS ÉPICOS
       </h3>
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
-              <th><i class="bi bi-geo-alt me-2"></i>País</th>
-              <th><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
-              <th><i class="bi bi-calendar3 me-2"></i>Año</th>
-              <th><i class="bi bi-sum me-2"></i>Total</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-geo-alt me-2"></i>País</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-calendar3 me-2"></i>Año</th>
+              <th onmouseenter="playHeaderSound()"><i class="bi bi-sum me-2"></i>Total</th>
             </tr>
           </thead>
           <tbody>
             {% for h in historico_list %}
-              <tr>
+              <tr onmouseenter="playRowSound()">
                 <td><strong>{{ h.pais }}</strong></td>
                 <td>{{ h.indicador }}</td>
                 <td>{{ h.anio }}</td>
-                <td><span class="badge bg-secondary rounded-pill">{{ h.total }}</span></td>
+                <td><span class="badge bg-secondary rounded-pill" onmouseenter="playBadgeSound()">{{ h.total }}</span></td>
               </tr>
             {% endfor %}
           </tbody>
@@ -479,5 +849,232 @@
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+q2m5Z5U5Eym4u0s5YFjK+p0I7wYF"
     crossorigin="anonymous"></script>
+
+  <script>
+    // Sistema de sonidos épicos
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function createTone(frequency, duration, type = 'sine') {
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = type;
+      
+      gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration);
+    }
+    
+    function playHoverSound() {
+      createTone(800, 0.1, 'sine');
+      setTimeout(() => createTone(1200, 0.1, 'sine'), 50);
+    }
+    
+    function playButtonSound() {
+      createTone(600, 0.15, 'square');
+      setTimeout(() => createTone(900, 0.1, 'sine'), 80);
+    }
+    
+    function playClickSound() {
+      createTone(1000, 0.2, 'sawtooth');
+      setTimeout(() => createTone(1500, 0.15, 'sine'), 100);
+      setTimeout(() => createTone(2000, 0.1, 'triangle'), 200);
+    }
+    
+    function playCardSound() {
+      createTone(500, 0.2, 'triangle');
+    }
+    
+    function playSelectSound() {
+      createTone(700, 0.1, 'sine');
+    }
+    
+    function playHeaderSound() {
+      createTone(1200, 0.15, 'square');
+    }
+    
+    function playRowSound() {
+      createTone(400, 0.1, 'sine');
+    }
+    
+    function playBadgeSound() {
+      createTone(1500, 0.08, 'triangle');
+    }
+    
+    function playResultSound() {
+      createTone(300, 0.3, 'sawtooth');
+      setTimeout(() => createTone(600, 0.2, 'sine'), 150);
+      setTimeout(() => createTone(900, 0.15, 'triangle'), 300);
+    }
+
+    // Crear partículas de fondo
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      const colors = ['#ff006e', '#8338ec', '#3a86ff', '#06ffa5', '#ffbe0b'];
+      
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Trail del cursor
+    let mouseTrail = [];
+    document.addEventListener('mousemove', (e) => {
+      const trail = document.createElement('div');
+      trail.className = 'cursor-trail';
+      trail.style.left = e.clientX + 'px';
+      trail.style.top = e.clientY + 'px';
+      document.body.appendChild(trail);
+      
+      mouseTrail.push(trail);
+      if (mouseTrail.length > 20) {
+        const oldTrail = mouseTrail.shift();
+        oldTrail.remove();
+      }
+      
+      setTimeout(() => {
+        if (trail.parentNode) {
+          trail.remove();
+        }
+      }, 1000);
+    });
+
+    // Efectos de teclado épicos
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        createTone(1000, 0.2, 'sawtooth');
+        setTimeout(() => createTone(1500, 0.15, 'sine'), 100);
+      } else if (e.key === ' ') {
+        createTone(500, 0.1, 'square');
+      } else {
+        createTone(300 + Math.random() * 200, 0.05, 'sine');
+      }
+    });
+
+    // Efectos de scroll épicos
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const scrollDiff = Math.abs(currentScrollY - lastScrollY);
+      
+      if (scrollDiff > 10) {
+        createTone(200 + scrollDiff, 0.05, 'triangle');
+        lastScrollY = currentScrollY;
+      }
+    });
+
+    // Inicializar efectos
+    document.addEventListener('DOMContentLoaded', () => {
+      createParticles();
+      
+      // Sonido de bienvenida épico
+      setTimeout(() => {
+        createTone(300, 0.5, 'sawtooth');
+        setTimeout(() => createTone(500, 0.4, 'sine'), 200);
+        setTimeout(() => createTone(800, 0.3, 'triangle'), 400);
+        setTimeout(() => createTone(1200, 0.2, 'square'), 600);
+      }, 500);
+    });
+
+    // Efecto de pulso en elementos interactivos
+    const interactiveElements = document.querySelectorAll('.card, .btn, .table tbody tr');
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        element.style.animation = 'none';
+        element.offsetHeight; // Trigger reflow
+        element.style.animation = 'pulse 0.6s ease-in-out';
+      });
+    });
+
+    // Efecto de shake en errores (si los hubiera)
+    function shakeElement(element) {
+      element.style.animation = 'shake 0.5s ease-in-out';
+      createTone(200, 0.3, 'sawtooth');
+      setTimeout(() => {
+        element.style.animation = '';
+      }, 500);
+    }
+
+    // Agregar keyframe para shake
+    const shakeKeyframes = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+    `;
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = shakeKeyframes;
+    document.head.appendChild(styleSheet);
+
+    // Efecto de explosión en botones
+    function createExplosion(x, y) {
+      for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'fixed';
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        particle.style.width = '4px';
+        particle.style.height = '4px';
+        particle.style.background = ['#ff006e', '#8338ec', '#3a86ff', '#06ffa5'][Math.floor(Math.random() * 4)];
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '10000';
+        
+        const angle = (Math.PI * 2 * i) / 10;
+        const velocity = 100 + Math.random() * 100;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        document.body.appendChild(particle);
+        
+        let startTime = performance.now();
+        function animate(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = elapsed / 1000;
+          
+          if (progress < 1) {
+            const currentX = x + vx * progress;
+            const currentY = y + vy * progress + 0.5 * 500 * progress * progress;
+            const opacity = 1 - progress;
+            
+            particle.style.left = currentX + 'px';
+            particle.style.top = currentY + 'px';
+            particle.style.opacity = opacity;
+            
+            requestAnimationFrame(animate);
+          } else {
+            particle.remove();
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+    }
+
+    // Agregar explosiones a botones
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const rect = btn.getBoundingClientRect();
+        createExplosion(
+          rect.left + rect.width / 2,
+          rect.top + rect.height / 2
+        );
+      });
+    });
+
+    console.log('🚀 SISTEMA ÉPICO ACTIVADO - ¡Preparado para la acción! ⚡');
+  </script>
 </body>
 </html>
