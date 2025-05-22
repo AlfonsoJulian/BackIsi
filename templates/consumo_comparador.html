@@ -9,23 +9,23 @@
   <div class="container my-4">
     <h1>Comparador de Consumo</h1>
 
-    <!-- Formulario de selección -->
+    <!-- Formulario -->
     <form method="post" action="{{ url_for('show_consumption') }}" class="form-inline mb-4">
-      <label class="mr-2" for="pais">País:</label>
+      <label for="pais" class="mr-2">País:</label>
       <select id="pais" name="pais" class="form-control mr-3">
         {% for p in paises %}
           <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
         {% endfor %}
       </select>
 
-      <label class="mr-2" for="indicador">Indicador:</label>
+      <label for="indicador" class="mr-2">Indicador:</label>
       <select id="indicador" name="indicador" class="form-control mr-3">
         {% for i in indicadores %}
           <option value="{{ i }}" {% if datos and datos.indicador == i %}selected{% endif %}>{{ i }}</option>
         {% endfor %}
       </select>
 
-      <label class="mr-2" for="anio">Año histórico:</label>
+      <label for="anio" class="mr-2">Año histórico:</label>
       <select id="anio" name="anio" class="form-control mr-3">
         <option value="">(último disponible)</option>
         {% for y in anios %}
@@ -33,10 +33,10 @@
         {% endfor %}
       </select>
 
-      <button class="btn btn-primary" type="submit">Comparar</button>
+      <button type="submit" class="btn btn-primary">Comparar</button>
     </form>
 
-    <!-- Resultado específico -->
+    <!-- Resultados específicos -->
     {% if datos %}
       <h2>Resultados para {{ datos.pais }} — {{ datos.indicador }}</h2>
       <p>Fecha actual: {{ datos.fecha_actual.strftime('%Y-%m-%d') }}</p>
@@ -50,35 +50,26 @@
           </tr>
         </thead>
         <tbody>
-          {% for key, actual in datos.valores_actual.items() %}
-            {% set historico = datos.valores_historico[key] if datos.valores_historico else None %}
+          {% for key, val in datos.valores_actual.items() %}
+            {% set hist = datos.valores_historico[key] if datos.valores_historico else None %}
             <tr>
               <td>{{ key.replace('_',' ').capitalize() }}</td>
-              <td>{{ actual }}</td>
-              <td>{{ historico or '—' }}</td>
-              <td>
-                {% if historico %}
-                  {{ (actual - historico) }}
-                {% else %}
-                  N/A
-                {% endif %}
-              </td>
+              <td>{{ val }}</td>
+              <td>{{ hist or '—' }}</td>
+              <td>{{ hist is not none and (val - hist) or 'N/A' }}</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     {% endif %}
 
-    <!-- Listado de todos los consumos actuales -->
+    <!-- Todos los consumos actuales -->
     {% if actual_list %}
       <h3>Todos los consumos actuales registrados</h3>
       <table class="table table-sm table-striped mb-4">
         <thead>
           <tr>
-            <th>País</th>
-            <th>Indicador</th>
-            <th>Fecha</th>
-            <th>Total</th>
+            <th>País</th><th>Indicador</th><th>Fecha</th><th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -86,7 +77,13 @@
             <tr>
               <td>{{ a.pais }}</td>
               <td>{{ a.indicador }}</td>
-              <td>{{ a.fecha.strftime('%Y-%m-%d') }}</td>
+              <td>
+                {% if a.fecha_parsed %}
+                  {{ a.fecha_parsed.strftime('%Y-%m-%d') }}
+                {% else %}
+                  {{ a.fecha[:10] }}
+                {% endif %}
+              </td>
               <td>{{ a.total }}</td>
             </tr>
           {% endfor %}
@@ -94,16 +91,13 @@
       </table>
     {% endif %}
 
-    <!-- Listado de todos los registros históricos -->
+    <!-- Todos los históricos -->
     {% if historico_list %}
       <h3>Todos los registros históricos</h3>
       <table class="table table-sm table-striped">
         <thead>
           <tr>
-            <th>País</th>
-            <th>Indicador</th>
-            <th>Año</th>
-            <th>Total</th>
+            <th>País</th><th>Indicador</th><th>Año</th><th>Total</th>
           </tr>
         </thead>
         <tbody>

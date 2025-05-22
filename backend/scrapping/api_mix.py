@@ -19,7 +19,10 @@ ZONE_NAMES = {
     "IT": "italia",
 }
 
-MWH_TO_PJ = 3.6e-6
+# de MWh a PJ
+MWH_TO_PJ      = 3.6e-6
+# para llevar de valor horario a anual: 24 horas × 365 días
+HOUR_TO_YEAR   = 24 * 365
 
 DB_PATH = r'C:\Users\Usuario\Desktop\facultad\cuarto\2CUATRI\isi\practicas\BackIsi\backend\bd\energy.db'
 
@@ -37,35 +40,51 @@ def get_comparable_mix(zone: str, token: str):
     cons = data["powerConsumptionBreakdown"]
     prod = data["powerProductionBreakdown"]
 
-    def safe(d,k): return float(d.get(k) or 0.0)
+    def safe(d, k):
+        return float(d.get(k) or 0.0)
 
     def extract(d):
         mapping = {
-            "coal":   "Coal, peat and oil shale",
-            "oil":    "Oil products",
-            "gas":    "Natural gas",
-            "nuclear":"Nuclear",
+            "coal":       "Coal, peat and oil shale",
+            "oil":        "Oil products",
+            "gas":        "Natural gas",
+            "nuclear":    "Nuclear",
             "renewables": ["wind","solar","hydro","biomass","geothermal"]
         }
+
         out = {
-            "pais":     ZONE_NAMES[zone],
-            "fecha":    ts
+            "pais":  ZONE_NAMES[zone],
+            "fecha": ts
         }
-        renew = sum(safe(d,k) for k in mapping["renewables"])
+
+        # sumatorio de renovables
+        renew = sum(safe(d, k) for k in mapping["renewables"])
+
+        # extraemos valores principales
         for key in ("coal","oil","gas","nuclear"):
             label = to_camel_case(mapping[key])
-            out[label] = safe(d,key)
+            out[label] = safe(d, key)
+
         out[to_camel_case("Renewables and waste")] = renew
+
+        # total instantáneo
         total = sum(out[to_camel_case(mapping[k])] for k in ("coal","oil","gas","nuclear")) + renew
         out[to_camel_case("Total")] = total
 
-        # pasa de MWh a PJ
+        # —— Conversión de MWh a PJ
         for k in list(out):
-            if k not in ("pais","fecha"):
+            if k not in ("pais", "fecha"):
                 out[k] *= MWH_TO_PJ
+
+        # —— Conversión de valor horario a anual (×24h ×365d)
+        for k in list(out):
+            if k not in ("pais", "fecha"):
+                out[k] *= HOUR_TO_YEAR
+
         return out
 
     return extract(cons), extract(prod)
+
 
 if __name__ == "__main__":
     conn = sqlite3.connect(DB_PATH)
@@ -90,7 +109,9 @@ if __name__ == "__main__":
                    oil_products, renewables_and_waste, total)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
-                rec["pais"], indicador, rec["fecha"],
+                rec["pais"],
+                indicador,
+                rec["fecha"],
                 rec.get("coalPeatAndOilShale"),
                 rec.get("naturalGas"),
                 rec.get("nuclear"),
@@ -101,4 +122,4 @@ if __name__ == "__main__":
 
     conn.commit()
     conn.close()
-    print("Datos actuales insertados en actual_consumo_produccion sin violar FKs.") 
+    print("Datos actuales insertados en actual_consumo_produccion (PJ anuales).")
