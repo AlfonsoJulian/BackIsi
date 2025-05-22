@@ -2,133 +2,482 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Comparador Consumo Actual vs Histórico</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIe4zVF0s0G1M5b4hcpxyD9F7jL+q2m5Z5U5Eym4u0s5YFjK+Vf5F2"
+    crossorigin="anonymous">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      height: 300px;
+      position: relative;
+      color: #fff;
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      margin-bottom: 3rem;
+    }
+    
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 0 0 30px 30px;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 1rem;
+      font-size: 3rem;
+    }
+    
+    .hero .lead {
+      font-size: 1.4rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .main-container {
+      margin-top: -50px;
+      position: relative;
+      z-index: 2;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.95);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin: 0 10px 2rem 10px;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .card-body {
+      padding: 2rem;
+    }
+    
+    .card-title {
+      color: #2c3e50;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: #34495e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e8ecef;
+      border-radius: 12px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.9);
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: #fff;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 15px;
+      padding: 12px 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+    
+    .btn-spain {
+      background: linear-gradient(
+        to right,
+        #AA151B 0%, #AA151B 33%,
+        #F1BF00 33%, #F1BF00 66%,
+        #AA151B 66%, #AA151B 100%
+      );
+      color: white;
+      border: 2px solid #AA151B;
+      border-radius: 15px;
+      padding: 12px 25px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(170, 21, 27, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .btn-spain:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(170, 21, 27, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+    
+    .table {
+      background: rgba(255,255,255,0.9);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      font-weight: 600;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .table tbody td {
+      padding: 0.8rem 1rem;
+      border: none;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: background-color 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+      background-color: rgba(102, 126, 234, 0.1);
+    }
+    
+    .table-striped tbody tr:nth-of-type(odd) {
+      background-color: rgba(255,255,255,0.7);
+    }
+    
+    .results-section {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      color: #2c3e50;
+    }
+    
+    .results-title {
+      color: #2c3e50;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .date-info {
+      background: rgba(255,255,255,0.8);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    
+    .floating-icon {
+      position: absolute;
+      opacity: 0.1;
+      font-size: 8rem;
+      color: white;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .icon-1 { top: 20%; left: 10%; animation-delay: 0s; }
+    .icon-2 { top: 60%; right: 15%; animation-delay: 2s; }
+    .icon-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+    
+    .section-title {
+      color: #2c3e50;
+      font-weight: 600;
+      margin: 2rem 0 1.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 1rem;
+      background: rgba(255,255,255,0.9);
+      padding: 2rem;
+      border-radius: 20px;
+      margin-bottom: 2rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .form-group label {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
+    
+    .badge-difference {
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    
+    .positive { background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%); color: #2d5a3d; }
+    .negative { background: linear-gradient(135deg, #ffd3e1 0%, #fd9eb8 100%); color: #8b1538; }
+    .neutral { background: linear-gradient(135deg, #e8ecef 0%, #d1d9e0 100%); color: #495057; }
+  </style>
 </head>
 <body>
-  <div class="container my-4">
-    <h1>Comparador de Consumo</h1>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="display-4">📊 Comparador de Consumo ⚡</h1>
+      <p class="lead">Análisis detallado de consumo actual vs histórico</p>
+    </div>
+    <!-- Floating Icons -->
+    <i class="bi bi-graph-up-arrow floating-icon icon-1"></i>
+    <i class="bi bi-bar-chart-fill floating-icon icon-2"></i>
+    <i class="bi bi-lightning-charge floating-icon icon-3"></i>
+  </section>
 
-    <!-- Botón para actualizar datos: bandera de España -->
-    <a href="{{ url_for('update_consumo') }}"
-       class="btn mb-4"
-       style="
-         background: linear-gradient(
-           to right,
-           #AA151B 0%, #AA151B 33%,
-           #F1BF00 33%, #F1BF00 66%,
-           #AA151B 66%, #AA151B 100%
-         );
-         color: white;
-         border: 1px solid #AA151B;
-       ">
-      Actualizar Consumo
-    </a>
+  <div class="container main-container">
+    
+    <!-- Botón de actualización -->
+    <div class="text-center mb-4">
+      <a href="{{ url_for('update_consumo') }}" class="btn-spain">
+        <i class="bi bi-arrow-clockwise"></i>
+        🇪🇸 Actualizar Consumo España
+      </a>
+    </div>
 
     <!-- Formulario -->
-    <form method="post" action="{{ url_for('show_consumption') }}" class="form-inline mb-4">
-      <label for="pais" class="mr-2">País:</label>
-      <select id="pais" name="pais" class="form-control mr-3">
-        {% for p in paises %}
-          <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
-        {% endfor %}
-      </select>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <i class="bi bi-sliders text-primary"></i>
+          🔍 Parámetros de Comparación
+        </h5>
+        <form method="post" action="{{ url_for('show_consumption') }}" class="form-row">
+          <div class="form-group">
+            <label for="pais" class="form-label">
+              <i class="bi bi-globe-americas text-success"></i>
+              País
+            </label>
+            <select id="pais" name="pais" class="form-control">
+              {% for p in paises %}
+                <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-      <label for="indicador" class="mr-2">Indicador:</label>
-      <select id="indicador" name="indicador" class="form-control mr-3">
-        {% for i in indicadores %}
-          <option value="{{ i }}" {% if datos and datos.indicador == i %}selected{% endif %}>{{ i }}</option>
-        {% endfor %}
-      </select>
+          <div class="form-group">
+            <label for="indicador" class="form-label">
+              <i class="bi bi-speedometer2 text-warning"></i>
+              Indicador
+            </label>
+            <select id="indicador" name="indicador" class="form-control">
+              {% for i in indicadores %}
+                <option value="{{ i }}" {% if datos and datos.indicador == i %}selected{% endif %}>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-      <label for="anio" class="mr-2">Año histórico:</label>
-      <select id="anio" name="anio" class="form-control mr-3">
-        <option value="">(último disponible)</option>
-        {% for y in anios %}
-          <option value="{{ y }}" {% if datos and datos.fecha_actual.year == y %}selected{% endif %}>{{ y }}</option>
-        {% endfor %}
-      </select>
+          <div class="form-group">
+            <label for="anio" class="form-label">
+              <i class="bi bi-calendar3 text-info"></i>
+              Año histórico
+            </label>
+            <select id="anio" name="anio" class="form-control">
+              <option value="">📅 (último disponible)</option>
+              {% for y in anios %}
+                <option value="{{ y }}" {% if datos and datos.fecha_actual.year == y %}selected{% endif %}>{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-      <button type="submit" class="btn btn-primary">Comparar</button>
-    </form>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-search me-2"></i>
+              ✨ Comparar Datos
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <!-- Resultados específicos -->
     {% if datos %}
-      <h2>Resultados para {{ datos.pais }} — {{ datos.indicador }}</h2>
-      <p>Fecha actual: {{ datos.fecha_actual.strftime('%Y-%m-%d') }}</p>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Actual</th>
-            <th>Histórico ({{ datos.fecha_actual.year }})</th>
-            <th>Diferencia</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for key, val in datos.valores_actual.items() %}
-            {% set hist = datos.valores_historico[key] if datos.valores_historico else None %}
-            <tr>
-              <td>{{ key.replace('_',' ').capitalize() }}</td>
-              <td>{{ val }}</td>
-              <td>{{ hist or '—' }}</td>
-              <td>{{ hist is not none and (val - hist) or 'N/A' }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="results-section">
+        <h2 class="results-title">
+          <i class="bi bi-graph-up text-primary"></i>
+          📈 Resultados para {{ datos.pais }} — {{ datos.indicador }}
+        </h2>
+        <div class="date-info">
+          <i class="bi bi-calendar-check text-success me-2"></i>
+          <strong>Fecha actual:</strong> {{ datos.fecha_actual.strftime('%Y-%m-%d') }}
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><i class="bi bi-tag me-2"></i>Tipo</th>
+                <th><i class="bi bi-clock me-2"></i>Actual</th>
+                <th><i class="bi bi-archive me-2"></i>Histórico ({{ datos.fecha_actual.year }})</th>
+                <th><i class="bi bi-calculator me-2"></i>Diferencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, val in datos.valores_actual.items() %}
+                {% set hist = datos.valores_historico[key] if datos.valores_historico else None %}
+                <tr>
+                  <td><strong>{{ key.replace('_',' ').capitalize() }}</strong></td>
+                  <td>{{ val }}</td>
+                  <td>{{ hist or '—' }}</td>
+                  <td>
+                    {% if hist is not none %}
+                      {% set diff = val - hist %}
+                      {% if diff > 0 %}
+                        <span class="badge-difference positive">+{{ diff }}</span>
+                      {% elif diff < 0 %}
+                        <span class="badge-difference negative">{{ diff }}</span>
+                      {% else %}
+                        <span class="badge-difference neutral">{{ diff }}</span>
+                      {% endif %}
+                    {% else %}
+                      <span class="badge-difference neutral">N/A</span>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     {% endif %}
 
     <!-- Todos los consumos actuales -->
     {% if actual_list %}
-      <h3>Todos los consumos actuales registrados</h3>
-      <table class="table table-sm table-striped mb-4">
-        <thead>
-          <tr>
-            <th>País</th><th>Indicador</th><th>Fecha</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for a in actual_list %}
+      <h3 class="section-title">
+        <i class="bi bi-lightning-fill text-warning"></i>
+        ⚡ Todos los consumos actuales registrados
+      </h3>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
             <tr>
-              <td>{{ a.pais }}</td>
-              <td>{{ a.indicador }}</td>
-              <td>
-                {% if a.fecha_parsed %}
-                  {{ a.fecha_parsed.strftime('%Y-%m-%d') }}
-                {% else %}
-                  {{ a.fecha[:10] }}
-                {% endif %}
-              </td>
-              <td>{{ a.total }}</td>
+              <th><i class="bi bi-geo-alt me-2"></i>País</th>
+              <th><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
+              <th><i class="bi bi-calendar me-2"></i>Fecha</th>
+              <th><i class="bi bi-sum me-2"></i>Total</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for a in actual_list %}
+              <tr>
+                <td><strong>{{ a.pais }}</strong></td>
+                <td>{{ a.indicador }}</td>
+                <td>
+                  {% if a.fecha_parsed %}
+                    {{ a.fecha_parsed.strftime('%Y-%m-%d') }}
+                  {% else %}
+                    {{ a.fecha[:10] }}
+                  {% endif %}
+                </td>
+                <td><span class="badge bg-primary rounded-pill">{{ a.total }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
 
     <!-- Todos los históricos -->
     {% if historico_list %}
-      <h3>Todos los registros históricos</h3>
-      <table class="table table-sm table-striped">
-        <thead>
-          <tr>
-            <th>País</th><th>Indicador</th><th>Año</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for h in historico_list %}
+      <h3 class="section-title">
+        <i class="bi bi-archive-fill text-secondary"></i>
+        📚 Todos los registros históricos
+      </h3>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
             <tr>
-              <td>{{ h.pais }}</td>
-              <td>{{ h.indicador }}</td>
-              <td>{{ h.anio }}</td>
-              <td>{{ h.total }}</td>
+              <th><i class="bi bi-geo-alt me-2"></i>País</th>
+              <th><i class="bi bi-speedometer2 me-2"></i>Indicador</th>
+              <th><i class="bi bi-calendar3 me-2"></i>Año</th>
+              <th><i class="bi bi-sum me-2"></i>Total</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for h in historico_list %}
+              <tr>
+                <td><strong>{{ h.pais }}</strong></td>
+                <td>{{ h.indicador }}</td>
+                <td>{{ h.anio }}</td>
+                <td><span class="badge bg-secondary rounded-pill">{{ h.total }}</span></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
 
   </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+q2m5Z5U5Eym4u0s5YFjK+p0I7wYF"
+    crossorigin="anonymous"></script>
 </body>
 </html>
