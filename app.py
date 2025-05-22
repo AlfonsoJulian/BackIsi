@@ -31,7 +31,8 @@ class ActualConsumoProduccion(db.Model):
     
     pais = db.Column(db.Text, db.ForeignKey('pais.pais'), primary_key=True)
     indicador = db.Column(db.Text, primary_key=True)
-    fecha = db.Column(db.Date, primary_key=True)
+    # CAMBIADO: Usamos Text en lugar de Date para manejar formatos complejos
+    fecha = db.Column(db.Text, primary_key=True)
     # FORZAMOS todos a Text para evitar conversión
     coal_peat_oil_shale  = db.Column(db.Text)
     natural_gas          = db.Column(db.Text)
@@ -63,6 +64,58 @@ def safe_float(value):
         return float(value)
     except (ValueError, TypeError):
         return 0.0
+
+def parse_date_safe(date_str):
+    """Parsea fechas en varios formatos de forma segura"""
+    if not date_str:
+        return None
+    
+    try:
+        # Si es un string que termina en 'Z', lo reemplazamos
+        if isinstance(date_str, str) and date_str.endswith('Z'):
+            date_str = date_str.replace('Z', '+00:00')
+        
+        # Intentamos diferentes formatos
+        formats_to_try = [
+            '%Y-%m-%dT%H:%M:%S.%f%z',  # 2025-05-20T11:00:00.000+00:00
+            '%Y-%m-%dT%H:%M:%S%z',     # 2025-05-20T11:00:00+00:00
+            '%Y-%m-%dT%H:%M:%S.%f',    # 2025-05-20T11:00:00.000
+            '%Y-%m-%dT%H:%M:%S',       # 2025-05-20T11:00:00
+            '%Y-%m-%d',                # 2025-05-20
+        ]
+        
+        for fmt in formats_to_try:
+            try:
+                parsed_date = datetime.strptime(date_str, fmt)
+                return parsed_date.date()  # Retornamos solo la fecha
+            except ValueError:
+                continue
+        
+        # Si ningún formato funciona, retornamos el string original
+        return date_str
+        
+    except Exception:
+        return date_str
+
+def get_year_from_date(date_value):
+    """Extrae el año de una fecha de forma segura"""
+    if not date_value:
+        return None
+    
+    try:
+        if isinstance(date_value, str):
+            parsed_date = parse_date_safe(date_value)
+            if hasattr(parsed_date, 'year'):
+                return parsed_date.year
+            # Si es string, intentamos extraer el año directamente
+            if len(date_value) >= 4 and date_value[:4].isdigit():
+                return int(date_value[:4])
+        elif hasattr(date_value, 'year'):
+            return date_value.year
+    except:
+        pass
+    
+    return None
 
 # --- Rutas ---
 @app.route('/')
@@ -112,12 +165,14 @@ def debug_db():
             """
         
         if sample_actual:
+            parsed_fecha = parse_date_safe(sample_actual.fecha)
             result += f"""
             <h2>Datos de muestra - Consumo Actual:</h2>
             <ul>
                 <li>País: {sample_actual.pais}</li>
                 <li>Indicador: {sample_actual.indicador}</li>
-                <li>Fecha: {sample_actual.fecha}</li>
+                <li>Fecha (original): {sample_actual.fecha}</li>
+                <li>Fecha (parseada): {parsed_fecha}</li>
                 <li>Coal: {sample_actual.coal_peat_oil_shale}</li>
                 <li>Gas: {sample_actual.natural_gas}</li>
                 <li>Total: {sample_actual.total}</li>
@@ -127,7 +182,6 @@ def debug_db():
         return result
     except Exception as e:
         return f"<h1>Error al conectar con la BD:</h1><p>{str(e)}</p><pre>{repr(e)}</pre>"
-
 @app.route('/consumo', methods=['GET','POST'])
 def show_consumption():
     # — 1) cargar siempre las listas para los desplegables y tablas
@@ -139,11 +193,19 @@ def show_consumption():
         anios = [y[0] for y in db.session.query(
                      HistoricoConsumoProduccion.anio
                  ).distinct().order_by(HistoricoConsumoProduccion.anio).all()]
+
         actual_list = ActualConsumoProduccion.query.order_by(
                           ActualConsumoProduccion.pais,
                           ActualConsumoProduccion.indicador,
                           ActualConsumoProduccion.fecha
                       ).all()
+
+        # ——— Aquí parseamos cada fecha de actual_list a date
+        for a in actual_list:
+            parsed = parse_date_safe(a.fecha)
+            if hasattr(parsed, 'strftime'):
+                a.fecha = parsed
+
         historico_list = HistoricoConsumoProduccion.query.order_by(
                              HistoricoConsumoProduccion.pais,
                              HistoricoConsumoProduccion.indicador,
@@ -155,7 +217,6 @@ def show_consumption():
 
     datos = None
     if request.method == 'POST':
-        # — 2) usar .get para no lanzar KeyError
         pais_sel = request.form.get('pais')
         ind_sel  = request.form.get('indicador')
         anio_sel = request.form.get('anio', type=int)
@@ -168,8 +229,11 @@ def show_consumption():
                     .first()
 
                 if actual:
-                    year = actual.fecha.year
+                    # ya parseábamos fecha con parse_date_safe aquí:
+                    fecha_parseada = parse_date_safe(actual.fecha)
+                    year = get_year_from_date(fecha_parseada) or get_year_from_date(actual.fecha)
                     target_year = anio_sel or year
+
                     historico = HistoricoConsumoProduccion.query.filter_by(
                         pais=pais_sel,
                         indicador=ind_sel,
@@ -179,7 +243,7 @@ def show_consumption():
                     datos = {
                         'pais': pais_sel,
                         'indicador': ind_sel,
-                        'fecha_actual': actual.fecha,
+                        'fecha_actual': fecha_parseada or actual.fecha,
                         'valores_actual': {
                             'coal': safe_float(actual.coal_peat_oil_shale),
                             'gas': safe_float(actual.natural_gas),
@@ -200,7 +264,6 @@ def show_consumption():
                             'total': safe_float(historico.total),
                         }
             except Exception as e:
-                # Si hay error en la consulta específica, mostramos el error
                 datos = {'error': f'Error procesando consulta: {str(e)}'}
 
     return render_template(
