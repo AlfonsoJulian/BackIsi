@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Simulador Energético</title>
+  <title>⚡ SIMULADOR ENERGÉTICO ÉPICO ⚡</title>
   <!-- Bootstrap 5 CSS -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -12,262 +12,692 @@
     crossorigin="anonymous">
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+    
     body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-    }
-    
-    .hero {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      height: 350px;
-      position: relative;
+      margin: 0;
+      padding: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background: #000;
       color: #fff;
-      border-radius: 0 0 30px 30px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      overflow-x: hidden;
+      position: relative;
     }
     
-    .hero-overlay {
+    /* MATRIX RAIN BACKGROUND */
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -3;
+      background: radial-gradient(ellipse at center, #001122 0%, #000000 100%);
+    }
+    
+    .matrix-rain {
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 0 0 30px 30px;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="20" fill="%2300ff41" opacity="0.1">01</text></svg>') repeat;
+      animation: matrix-fall 20s linear infinite;
+      opacity: 0.3;
+    }
+    
+    @keyframes matrix-fall {
+      0% { transform: translateY(-100vh); }
+      100% { transform: translateY(100vh); }
+    }
+    
+    /* ANIMATED GRID BACKGROUND */
+    .cyber-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background-image: 
+        linear-gradient(rgba(0,255,65,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,65,0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: grid-pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes grid-pulse {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 0.5; }
+    }
+    
+    /* LASER BEAMS */
+    .laser-beam {
+      position: absolute;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff41, #ff0080, transparent);
+      animation: laser-sweep 3s linear infinite;
+      box-shadow: 0 0 20px #00ff41, 0 0 40px #ff0080;
+    }
+    
+    @keyframes laser-sweep {
+      0% { 
+        width: 0; 
+        left: -100%;
+        opacity: 0;
+      }
+      20% { 
+        opacity: 1;
+      }
+      80% { 
+        opacity: 1;
+      }
+      100% { 
+        width: 100vw; 
+        left: 100%;
+        opacity: 0;
+      }
+    }
+    
+    .laser-1 { top: 20%; animation-delay: 0s; }
+    .laser-2 { top: 60%; animation-delay: 1s; }
+    .laser-3 { top: 80%; animation-delay: 2s; }
+    
+    /* HERO SECTION EPIC */
+    .hero {
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(45deg, #000428 0%, #004e92 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(255,0,128,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(0,255,65,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(0,255,255,0.2) 0%, transparent 50%);
+      animation: color-dance 8s ease-in-out infinite;
+    }
+    
+    @keyframes color-dance {
+      0%, 100% { 
+        filter: hue-rotate(0deg) brightness(1); 
+      }
+      25% { 
+        filter: hue-rotate(90deg) brightness(1.2); 
+      }
+      50% { 
+        filter: hue-rotate(180deg) brightness(0.8); 
+      }
+      75% { 
+        filter: hue-rotate(270deg) brightness(1.1); 
+      }
     }
     
     .hero-content {
-      position: relative;
-      z-index: 1;
-      top: 50%;
-      transform: translateY(-50%);
       text-align: center;
+      z-index: 10;
+      position: relative;
     }
     
     .hero h1 {
-      font-weight: 700;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-      margin-bottom: 1rem;
+      font-family: 'Orbitron', monospace;
+      font-size: 4rem;
+      font-weight: 900;
+      background: linear-gradient(45deg, #00ff41, #ff0080, #00ffff, #ffff00);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-text 3s ease-in-out infinite, text-glow 2s ease-in-out infinite;
+      text-shadow: 0 0 30px rgba(0,255,65,0.8);
+      margin-bottom: 2rem;
+      transform: scale(1);
+      transition: all 0.3s ease;
+    }
+    
+    .hero h1:hover {
+      transform: scale(1.1);
+      filter: drop-shadow(0 0 20px #00ff41);
+    }
+    
+    @keyframes gradient-text {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    
+    @keyframes text-glow {
+      0%, 100% { text-shadow: 0 0 30px rgba(0,255,65,0.8); }
+      50% { text-shadow: 0 0 50px rgba(255,0,128,1), 0 0 80px rgba(0,255,255,0.8); }
     }
     
     .hero .lead {
-      font-size: 1.4rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #00ffff;
+      text-shadow: 0 0 20px rgba(0,255,255,0.8);
+      animation: pulse-glow 3s ease-in-out infinite;
     }
     
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; text-shadow: 0 0 30px rgba(0,255,255,1); }
+    }
+    
+    /* FLOATING PARTICLES */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #00ff41;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff41;
+      animation: float-particle 6s linear infinite;
+    }
+    
+    @keyframes float-particle {
+      0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100px) scale(0);
+        opacity: 0;
+      }
+    }
+    
+    /* MAIN CONTAINER EPIC */
     .main-container {
-      margin-top: -50px;
       position: relative;
-      z-index: 2;
-      padding-left: 2rem;
-      padding-right: 2rem;
+      z-index: 5;
+      padding: 4rem 2rem;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(20px);
     }
     
+    /* EPIC CARDS */
     .card {
-      border: none;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.95);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      margin: 0 10px;
+      background: linear-gradient(135deg, rgba(0,20,40,0.9) 0%, rgba(0,10,30,0.95) 100%);
+      border: 2px solid transparent;
+      border-radius: 25px;
+      box-shadow: 
+        0 0 50px rgba(0,255,65,0.3),
+        inset 0 0 50px rgba(0,255,255,0.1);
+      backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: perspective(1000px) rotateX(5deg);
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,255,65,0.4), transparent);
+      transition: left 0.7s ease;
+    }
+    
+    .card:hover::before {
+      left: 100%;
     }
     
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      transform: perspective(1000px) rotateX(0deg) scale(1.05);
+      border-color: #00ff41;
+      box-shadow: 
+        0 0 100px rgba(0,255,65,0.6),
+        0 0 200px rgba(255,0,128,0.3),
+        inset 0 0 50px rgba(0,255,255,0.2);
     }
     
     .card-body {
-      padding: 2rem;
+      position: relative;
+      z-index: 2;
+      padding: 2.5rem;
     }
-      color: #2c3e50;
+    
+    .card-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #00ff41;
+      text-shadow: 0 0 20px rgba(0,255,65,0.8);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    /* EPIC FORM CONTROLS */
+    .form-label {
       font-weight: 600;
+      color: #00ffff;
+      font-size: 1.1rem;
+      text-shadow: 0 0 10px rgba(0,255,255,0.6);
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 1.5rem;
-    }
-    
-    .form-label {
-      font-weight: 500;
-      color: #34495e;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      margin-bottom: 0.8rem;
     }
     
     .form-control, .form-select {
-      border: 2px solid #e8ecef;
-      border-radius: 12px;
-      padding: 12px 16px;
-      transition: all 0.3s ease;
-      background: rgba(255,255,255,0.9);
+      background: rgba(0,20,40,0.8);
+      border: 2px solid rgba(0,255,65,0.5);
+      border-radius: 15px;
+      padding: 15px 20px;
+      color: #00ffff;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: all 0.4s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: inset 0 0 20px rgba(0,255,65,0.1);
     }
     
     .form-control:focus, .form-select:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-      background: #fff;
+      background: rgba(0,30,60,0.9);
+      border-color: #00ff41;
+      box-shadow: 
+        0 0 30px rgba(0,255,65,0.6),
+        inset 0 0 30px rgba(0,255,65,0.2);
+      color: #fff;
+      transform: scale(1.02);
     }
     
+    .form-control:hover, .form-select:hover {
+      border-color: #ff0080;
+      box-shadow: 0 0 20px rgba(255,0,128,0.4);
+    }
+    
+    /* EPIC BUTTON */
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(45deg, #00ff41, #ff0080, #00ffff);
+      background-size: 300% 300%;
       border: none;
-      border-radius: 15px;
-      padding: 15px 30px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+      border-radius: 20px;
+      padding: 20px 40px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #000;
+      box-shadow: 
+        0 0 30px rgba(0,255,65,0.6),
+        0 10px 30px rgba(0,0,0,0.3);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: button-glow 3s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.6s ease;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    @keyframes button-glow {
+      0%, 100% { 
+        background-position: 0% 50%;
+        box-shadow: 
+          0 0 30px rgba(0,255,65,0.6),
+          0 10px 30px rgba(0,0,0,0.3);
+      }
+      50% { 
+        background-position: 100% 50%;
+        box-shadow: 
+          0 0 60px rgba(255,0,128,0.8),
+          0 15px 40px rgba(0,0,0,0.5);
+      }
     }
     
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 
+        0 0 80px rgba(0,255,65,1),
+        0 20px 50px rgba(255,0,128,0.6);
+      background-size: 400% 400%;
+      animation-duration: 0.5s;
     }
     
+    .btn-primary:active {
+      transform: translateY(-2px) scale(1.02);
+    }
+    
+    /* RESULT CARD EPIC */
     .result-card {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
+      background: linear-gradient(135deg, rgba(20,0,40,0.9) 0%, rgba(40,0,20,0.95) 100%);
+      border: 2px solid rgba(255,0,128,0.6);
     }
     
-    .result-card     
-    .card-title {
-      color: white;
-    }
-    
+    /* LIST ITEMS EPIC */
     .list-group-item {
-      border: none;
-      border-radius: 12px !important;
-      margin-bottom: 8px;
-      background: rgba(255,255,255,0.9);
-      backdrop-filter: blur(10px);
-      font-weight: 500;
-      transition: all 0.3s ease;
+      background: rgba(0,20,40,0.8);
+      border: 1px solid rgba(0,255,65,0.3);
+      border-radius: 15px !important;
+      margin-bottom: 12px;
+      padding: 15px 20px;
+      backdrop-filter: blur(15px);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      color: #00ffff;
+      font-weight: 600;
+    }
+    
+    .list-group-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,255,65,0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    
+    .list-group-item:hover::before {
+      left: 100%;
     }
     
     .list-group-item:hover {
-      background: rgba(255,255,255,1);
-      transform: translateX(5px);
+      transform: translateX(10px) scale(1.02);
+      border-color: #00ff41;
+      box-shadow: 
+        0 0 30px rgba(0,255,65,0.6),
+        0 5px 20px rgba(0,0,0,0.3);
+      background: rgba(0,30,60,0.9);
     }
     
     .cost-item {
-      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      border-left: 5px solid #ff0080;
     }
     
     .impact-item {
-      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      border-left: 5px solid #00ff41;
     }
     
+    /* BADGES EPIC */
+    .badge {  
+      font-size: 1rem !important;
+      padding: 8px 15px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes badge-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    /* LOADING ANIMATION EPIC */
     .loading-spinner {
-      animation: spin 1s linear infinite;
+      animation: epic-spin 1s linear infinite;
+      color: #00ff41;
+      text-shadow: 0 0 20px #00ff41;
     }
     
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    @keyframes epic-spin {
+      from { 
+        transform: rotate(0deg) scale(1);
+        color: #00ff41;
+      }
+      25% {
+        color: #ff0080;
+        transform: rotate(90deg) scale(1.1);
+      }
+      50% {
+        color: #00ffff;
+        transform: rotate(180deg) scale(1);
+      }
+      75% {
+        color: #ffff00;
+        transform: rotate(270deg) scale(1.1);
+      }
+      to { 
+        transform: rotate(360deg) scale(1);
+        color: #00ff41;
+      }
     }
     
+    /* ALERT EPIC */
     .alert {
-      border: none;
+      background: rgba(20,0,0,0.9);
+      border: 2px solid #ff0080;
       border-radius: 15px;
-      font-weight: 500;
+      backdrop-filter: blur(20px);
+      color: #ff0080;
+      font-weight: 600;
+      box-shadow: 0 0 30px rgba(255,0,128,0.4);
     }
     
-    .floating-icon {
+    /* ICONS ANIMATIONS */
+    .bi {
+      transition: all 0.3s ease;
+    }
+    
+    .bi:hover {
+      transform: scale(1.2) rotate(10deg);
+      filter: drop-shadow(0 0 10px currentColor);
+    }
+    
+    /* SOUND EFFECT STYLES */
+    .sound-trigger {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .sound-trigger:hover {
+      animation: sound-wave 0.6s ease-in-out;
+    }
+    
+    @keyframes sound-wave {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.05); }
+      50% { transform: scale(1.1); }
+      75% { transform: scale(1.05); }
+    }
+    
+    /* SCROLL ANIMATIONS */
+    @keyframes slideInFromLeft {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes slideInFromRight {
+      0% {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .animate-left {
+      animation: slideInFromLeft 1s ease-out;
+    }
+    
+    .animate-right {
+      animation: slideInFromRight 1s ease-out;
+    }
+    
+    /* EXPLOSION EFFECTS */
+    .explosion {
       position: absolute;
-      opacity: 0.1;
-      font-size: 8rem;
-      color: white;
-      animation: float 6s ease-in-out infinite;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, #ff0080 0%, #00ff41 50%, transparent 100%);
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      animation: explode 0.6s ease-out;
     }
     
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
+    @keyframes explode {
+      0% {
+        transform: scale(0);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(3);
+        opacity: 0;
+      }
     }
     
-    .icon-1 { top: 20%; left: 10%; animation-delay: 0s; }
-    .icon-2 { top: 60%; right: 15%; animation-delay: 2s; }
-    .icon-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero .lead {
+        font-size: 1.3rem;
+      }
+      
+      .card {
+        margin: 10px 0;
+      }
+      
+      .main-container {
+        padding: 2rem 1rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Hero Section -->
-  <section class="hero mb-5">
-    <div class="hero-overlay"></div>
+  <!-- Matrix Background -->
+  <div class="matrix-bg">
+    <div class="matrix-rain"></div>
+  </div>
+  
+  <!-- Cyber Grid -->
+  <div class="cyber-grid"></div>
+  
+  <!-- Laser Beams -->
+  <div class="laser-beam laser-1"></div>
+  <div class="laser-beam laser-2"></div>
+  <div class="laser-beam laser-3"></div>
+
+  <!-- Hero Section EPIC -->
+  <section class="hero">
     <div class="hero-content">
-      <h1 class="display-4">⚡ Simulador Energético 🏢</h1>
-      <p class="lead">Calcula costes e impacto de datacenters y centrales eléctricas</p>
+      <h1 class="sound-trigger">⚡ SIMULADOR ENERGÉTICO ÉPICO ⚡</h1>
+      <p class="lead sound-trigger">🚀 DOMINA LA ENERGÍA DEL FUTURO 🚀</p>
+      <div class="mt-4">
+        <i class="bi bi-lightning-fill" style="font-size: 3rem; color: #00ff41; margin: 0 20px; animation: pulse-glow 2s infinite;"></i>
+        <i class="bi bi-cpu-fill" style="font-size: 3rem; color: #ff0080; margin: 0 20px; animation: pulse-glow 2s infinite 0.5s;"></i>
+        <i class="bi bi-rocket-takeoff-fill" style="font-size: 3rem; color: #00ffff; margin: 0 20px; animation: pulse-glow 2s infinite 1s;"></i>
+      </div>
     </div>
-    <!-- Floating Icons -->
-    <i class="bi bi-lightning-fill floating-icon icon-1"></i>
-    <i class="bi bi-building floating-icon icon-2"></i>
-    <i class="bi bi-gear-fill floating-icon icon-3"></i>
   </section>
 
   <div class="container main-container px-4">
-    <div class="row gx-4">
+    <div class="row gx-5">
       <!-- Form Column -->
-      <div class="col-lg-5 mb-4">
-        <div class="card shadow-sm">
+      <div class="col-lg-5 mb-4 animate-left">
+        <div class="card shadow-sm sound-trigger">
           <div class="card-body">
             <h5 class="card-title">
               <i class="bi bi-sliders text-primary"></i>
-              Parámetros de Simulación
+              🎛️ CENTRO DE CONTROL ÉPICO
             </h5>
-            <form id="sim-form" class="row g-3">
+            <form id="sim-form" class="row g-4">
               <div class="col-12">
-                <label for="pais" class="form-label">
+                <label for="pais" class="form-label sound-trigger">
                   <i class="bi bi-globe-americas text-success"></i>
-                  País
+                  🌍 ZONA DE OPERACIONES
                 </label>
-                <select id="pais" name="pais" class="form-select" required>
-                  <option value="">🌍 -- Selecciona un país --</option>
-                  {% for p in paises %}
-                  <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
-                  {% endfor %}
+                <select id="pais" name="pais" class="form-select sound-trigger" required>
+                  <option value="">🌍 -- Selecciona tu territorio --</option>
+              {% for p in paises %}
+                <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
+              {% endfor %}
                 </select>
               </div>
               <div class="col-md-6">
-                <label for="year" class="form-label">
+                <label for="year" class="form-label sound-trigger">
                   <i class="bi bi-calendar3 text-info"></i>
-                  Año
+                  📅 AÑO OBJETIVO
                 </label>
-                <input type="number" id="year" name="year" class="form-control" value="2020" min="1900" max="2100" required>
+                <input type="number" id="year" name="year" class="form-control sound-trigger" value="2020" min="1900" max="2100" required>
               </div>
               <div class="col-md-6">
-                <label for="datacenters" class="form-label">
+                <label for="datacenters" class="form-label sound-trigger">
                   <i class="bi bi-hdd-rack text-primary"></i>
-                  # Datacenters
+                  🏢 DATACENTERS
                 </label>
-                <input type="number" id="datacenters" name="datacenters" class="form-control" value="0" min="0">
+                <input type="number" id="datacenters" name="datacenters" class="form-control sound-trigger" value="0" min="0">
               </div>
               <div class="col-md-6">
-                <label for="dc_capacity_kw" class="form-label">
+                <label for="dc_capacity_kw" class="form-label sound-trigger">
                   <i class="bi bi-cpu text-warning"></i>
-                  Capacidad DC (kW)
+                  ⚡ POTENCIA DC (kW)
                 </label>
-                <input type="number" id="dc_capacity_kw" name="dc_capacity_kw" class="form-control" value="1000" min="0" step="any">
+                <input type="number" id="dc_capacity_kw" name="dc_capacity_kw" class="form-control sound-trigger" value="1000" min="0" step="any">
               </div>
               <div class="col-md-6">
-                <label for="powerplants" class="form-label">
+                <label for="powerplants" class="form-label sound-trigger">
                   <i class="bi bi-building text-danger"></i>
-                  # Centrales
+                  🏭 CENTRALES
                 </label>
-                <input type="number" id="powerplants" name="powerplants" class="form-control" value="0" min="0">
+                <input type="number" id="powerplants" name="powerplants" class="form-control sound-trigger" value="0" min="0">
               </div>
               <div class="col-md-6">
-                <label for="pp_capacity_kw" class="form-label">
+                <label for="pp_capacity_kw" class="form-label sound-trigger">
                   <i class="bi bi-lightning-charge text-success"></i>
-                  Capacidad PP (kW)
+                  ⚡ POTENCIA PP (kW)
                 </label>
-                <input type="number" id="pp_capacity_kw" name="pp_capacity_kw" class="form-control" value="500000" min="0" step="any">
+                <input type="number" id="pp_capacity_kw" name="pp_capacity_kw" class="form-control sound-trigger" value="500000" min="0" step="any">
               </div>
               <div class="col-12">
-                <button type="submit" class="btn btn-primary w-100">
-                  <i class="bi bi-play-fill me-2"></i>
-                  ✨ Simular Ahora ✨
+                <button type="submit" class="btn btn-primary w-100 sound-trigger">
+                  <i class="bi bi-rocket-takeoff-fill me-2"></i>
+                  🚀 INICIAR SIMULACIÓN ÉPICA 🚀
                 </button>
               </div>
             </form>
@@ -276,17 +706,21 @@
       </div>
 
       <!-- Result Column -->
-      <div class="col-lg-7">
+      <div class="col-lg-7 animate-right">
         <div id="result" class="card shadow-sm h-100">
           <div class="card-body">
             <h5 class="card-title">
               <i class="bi bi-graph-up text-success"></i>
-              📊 Resultados de la Simulación
+              📊 PANEL DE RESULTADOS ÉPICOS
             </h5>
-            <div class="pre-scrollable text-muted text-center py-5">
-              <i class="bi bi-info-circle-fill display-1 text-muted mb-3"></i>
-              <h6>💡 Introduce los datos y haz clic en "Simular"</h6>
-              <p class="small">Los resultados aparecerán aquí instantáneamente</p>
+            <div class="text-center py-5">
+              <div style="font-size: 5rem; margin-bottom: 2rem;">
+                <i class="bi bi-lightning-fill" style="color: #00ff41; animation: pulse-glow 2s infinite;"></i>
+                <i class="bi bi-cpu-fill" style="color: #ff0080; animation: pulse-glow 2s infinite 0.3s;"></i>
+                <i class="bi bi-building" style="color: #00ffff; animation: pulse-glow 2s infinite 0.6s;"></i>
+              </div>
+              <h4 style="color: #00ff41; text-shadow: 0 0 20px #00ff41;">💡 ESPERANDO ÓRDENES</h4>
+              <p class="text-muted">Los datos aparecerán aquí al completar la simulación</p>
             </div>
           </div>
         </div>
@@ -294,12 +728,115 @@
     </div>
   </div>
 
+  <!-- Particles -->
+  <script>
+    // Create floating particles
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + 'vw';
+      particle.style.animationDelay = Math.random() * 6 + 's';
+      particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+      document.body.appendChild(particle);
+      
+      setTimeout(() => {
+        particle.remove();
+      }, 6000);
+    }
+    
+    setInterval(createParticle, 200);
+  </script>
+
   <!-- Bootstrap JS Bundle -->
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+q2m5Z5U5Eym4u0s5YFjK+p0I7wYF"
     crossorigin="anonymous"></script>
+  
   <script>
+    // EPIC SOUND EFFECTS (Web Audio API)
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playEpicSound(frequency, duration, type = 'sine') {
+      try {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+        oscillator.type = type;
+        
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+      } catch (e) {
+        // Silently handle audio context issues
+      }
+    }
+    
+    function playLaserSound() {
+      playEpicSound(800, 0.3, 'sawtooth');
+      setTimeout(() => playEpicSound(400, 0.2, 'square'), 100);
+    }
+    
+    function playExplosionSound() {
+      playEpicSound(100, 0.5, 'sawtooth');
+      setTimeout(() => playEpicSound(50, 0.3, 'triangle'), 200);
+    }
+    
+    function playHoverSound() {
+      playEpicSound(600, 0.1, 'sine');
+    }
+    
+    function playClickSound() {
+      playEpicSound(1000, 0.1, 'square');
+      setTimeout(() => playEpicSound(1200, 0.1, 'sine'), 50);
+    }
+    
+    // Create explosion effect
+    function createExplosion(x, y) {
+      const explosion = document.createElement('div');
+      explosion.className = 'explosion';
+      explosion.style.left = (x - 50) + 'px';
+      explosion.style.top = (y - 50) + 'px';
+      document.body.appendChild(explosion);
+      
+      playExplosionSound();
+      
+      setTimeout(() => {
+        explosion.remove();
+      }, 600);
+    }
+    
+    // Add epic sound effects to elements
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add hover sounds
+      document.querySelectorAll('.sound-trigger').forEach(element => {
+        element.addEventListener('mouseenter', () => {
+          playHoverSound();
+        });
+        
+        element.addEventListener('click', (e) => {
+          playClickSound();
+          if (element.tagName === 'BUTTON') {
+            createExplosion(e.clientX, e.clientY);
+          }
+        });
+      });
+      
+      // Add laser sounds to form inputs
+      document.querySelectorAll('.form-control, .form-select').forEach(element => {
+        element.addEventListener('focus', () => {
+          playLaserSound();
+        });
+      });
+    });
+    
+    // ORIGINAL FORM LOGIC (UNCHANGED)
     document.getElementById('sim-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const form = e.target;
@@ -313,17 +850,37 @@
       };
 
       const resultDiv = document.getElementById('result').querySelector('.card-body');
+      
+      // EPIC LOADING ANIMATION
       resultDiv.innerHTML = `
         <h5 class="card-title">
           <i class="bi bi-graph-up text-success"></i>
-          📊 Resultados de la Simulación
+          📊 PANEL DE RESULTADOS ÉPICOS
         </h5>
-        <div class="text-center text-primary py-5">
-          <i class="bi bi-arrow-clockwise loading-spinner display-1 mb-3"></i>
-          <h5>⚡ Simulando...</h5>
-          <p class="text-muted">Procesando los datos energéticos</p>
+        <div class="text-center py-5">
+          <div style="font-size: 4rem; margin-bottom: 2rem;">
+            <i class="bi bi-arrow-clockwise loading-spinner"></i>
+          </div>
+          <h4 style="color: #00ff41; text-shadow: 0 0 20px #00ff41;">⚡ PROCESANDO DATOS ÉPICOS...</h4>
+          <p style="color: #00ffff;">🚀 Analizando el poder energético del futuro</p>
+          <div style="margin-top: 2rem;">
+            <div style="display: inline-block; margin: 0 10px;">
+              <i class="bi bi-lightning-fill" style="font-size: 2rem; color: #00ff41; animation: pulse-glow 1s infinite;"></i>
+            </div>
+            <div style="display: inline-block; margin: 0 10px;">
+              <i class="bi bi-cpu-fill" style="font-size: 2rem; color: #ff0080; animation: pulse-glow 1s infinite 0.3s;"></i>
+            </div>
+            <div style="display: inline-block; margin: 0 10px;">
+              <i class="bi bi-building" style="font-size: 2rem; color: #00ffff; animation: pulse-glow 1s infinite 0.6s;"></i>
+            </div>
+          </div>
         </div>
       `;
+
+      // Play epic loading sound sequence
+      playLaserSound();
+      setTimeout(() => playEpicSound(1200, 0.2, 'sine'), 300);
+      setTimeout(() => playEpicSound(1500, 0.2, 'triangle'), 600);
 
       try {
         const resp = await fetch('/api/simulate', {
@@ -334,37 +891,54 @@
         const json = await resp.json();
 
         if (!resp.ok) {
+          // EPIC ERROR DISPLAY
           resultDiv.innerHTML = `
             <h5 class="card-title">
               <i class="bi bi-graph-up text-success"></i>
-              📊 Resultados de la Simulación
+              📊 PANEL DE RESULTADOS ÉPICOS
             </h5>
-            <div class="alert alert-danger">
-              <i class="bi bi-exclamation-triangle-fill me-2"></i>
-              ${json.error || 'Error desconocido'}
+            <div class="alert alert-danger sound-trigger">
+              <div style="text-align: center; margin-bottom: 1rem;">
+                <i class="bi bi-exclamation-triangle-fill" style="font-size: 3rem; color: #ff0080; animation: pulse-glow 1s infinite;"></i>
+              </div>
+              <h5 style="text-align: center; color: #ff0080;">⚠️ ERROR EN LA MATRIX ⚠️</h5>
+              <p style="text-align: center; margin: 0;">${json.error || 'Error desconocido en el sistema'}</p>
             </div>
           `;
+          playExplosionSound();
           return;
         }
 
+        // EPIC SUCCESS DISPLAY
         let html = `
           <h5 class="card-title">
             <i class="bi bi-graph-up text-success"></i>
-            📊 Resultados de la Simulación
+            📊 PANEL DE RESULTADOS ÉPICOS
           </h5>
           <div class="row mb-4">
             <div class="col-12">
-              <h5 class="text-primary mb-3">
-                <i class="bi bi-currency-dollar"></i> 💰 Análisis de Costes
+              <h5 style="color: #00ff41; text-shadow: 0 0 20px #00ff41; margin-bottom: 2rem; text-align: center;">
+                <i class="bi bi-currency-dollar" style="animation: pulse-glow 2s infinite;"></i> 
+                💰 ANÁLISIS FINANCIERO ÉPICO 💰
               </h5>
               <ul class="list-group">
-                <li class="list-group-item cost-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-hdd-rack text-primary me-2"></i><strong>Datacenters</strong></span>
-                  <span class="badge bg-primary rounded-pill fs-6">${json.coste_datacenters.toFixed(2)} €</span>
+                <li class="list-group-item cost-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-hdd-rack text-primary me-2" style="font-size: 1.2rem;"></i>
+                    <strong>🏢 DATACENTERS SUPREMOS</strong>
+                  </span>
+                  <span class="badge bg-primary rounded-pill" style="background: linear-gradient(45deg, #00ff41, #00ffff) !important; color: #000; font-weight: 700;">
+                    ${json.coste_datacenters.toFixed(2)} €
+                  </span>
                 </li>
-                <li class="list-group-item cost-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-building text-danger me-2"></i><strong>Centrales Eléctricas</strong></span>
-                  <span class="badge bg-danger rounded-pill fs-6">${json.coste_powerplants.toFixed(2)} €</span>
+                <li class="list-group-item cost-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-building text-danger me-2" style="font-size: 1.2rem;"></i>
+                    <strong>🏭 CENTRALES DE PODER</strong>
+                  </span>
+                  <span class="badge bg-danger rounded-pill" style="background: linear-gradient(45deg, #ff0080, #ff4444) !important; color: #fff; font-weight: 700;">
+                    ${json.coste_powerplants.toFixed(2)} €
+                  </span>
                 </li>
               </ul>
             </div>
@@ -372,44 +946,144 @@
           
           <div class="row">
             <div class="col-12">
-              <h5 class="text-success mb-3">
-                <i class="bi bi-lightning-fill"></i> ⚡ Impacto Energético
+              <h5 style="color: #ff0080; text-shadow: 0 0 20px #ff0080; margin-bottom: 2rem; text-align: center;">
+                <i class="bi bi-lightning-fill" style="animation: pulse-glow 2s infinite;"></i> 
+                ⚡ DOMINIO ENERGÉTICO TOTAL ⚡
               </h5>
               <ul class="list-group">
-                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-arrow-down-circle text-danger me-2"></i><strong>Consumo DC (MWh)</strong></span>
-                  <span class="badge bg-warning rounded-pill fs-6">${json.impact.datacenters_mwh.toFixed(2)}</span>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-arrow-down-circle text-danger me-2" style="font-size: 1.2rem;"></i>
+                    <strong>⬇️ CONSUMO DC (MWh)</strong>
+                  </span>
+                  <span class="badge bg-warning rounded-pill" style="background: linear-gradient(45deg, #ffaa00, #ff6600) !important; color: #000; font-weight: 700;">
+                    ${json.impact.datacenters_mwh.toFixed(2)}
+                  </span>
                 </li>
-                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-arrow-up-circle text-success me-2"></i><strong>Producción PP (MWh)</strong></span>
-                  <span class="badge bg-success rounded-pill fs-6">${json.impact.powerplants_mwh.toFixed(2)}</span>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-arrow-up-circle text-success me-2" style="font-size: 1.2rem;"></i>
+                    <strong>⬆️ PRODUCCIÓN PP (MWh)</strong>
+                  </span>
+                  <span class="badge bg-success rounded-pill" style="background: linear-gradient(45deg, #00ff41, #00aa22) !important; color: #000; font-weight: 700;">
+                    ${json.impact.powerplants_mwh.toFixed(2)}
+                  </span>
                 </li>
-                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-graph-up text-info me-2"></i><strong>Balance Neto (MWh)</strong></span>
-                  <span class="badge bg-info rounded-pill fs-6">${json.impact.net_mwh.toFixed(2)}</span>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-graph-up text-info me-2" style="font-size: 1.2rem;"></i>
+                    <strong>📈 BALANCE NETO (MWh)</strong>
+                  </span>
+                  <span class="badge bg-info rounded-pill" style="background: linear-gradient(45deg, #00ffff, #0088cc) !important; color: #000; font-weight: 700;">
+                    ${json.impact.net_mwh.toFixed(2)}
+                  </span>
                 </li>
-                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
-                  <span><i class="bi bi-speedometer2 text-secondary me-2"></i><strong>Balance Neto (PJ)</strong></span>
-                  <span class="badge bg-secondary rounded-pill fs-6">${json.impact.net_pj.toExponential(2)}</span>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center sound-trigger">
+                  <span>
+                    <i class="bi bi-speedometer2 text-secondary me-2" style="font-size: 1.2rem;"></i>
+                    <strong>🚀 BALANCE NETO (PJ)</strong>
+                  </span>
+                  <span class="badge bg-secondary rounded-pill" style="background: linear-gradient(45deg, #aa00ff, #6600cc) !important; color: #fff; font-weight: 700;">
+                    ${json.impact.net_pj.toExponential(2)}
+                  </span>
                 </li>
               </ul>
             </div>
           </div>
+          
+          <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: rgba(0,255,65,0.1); border-radius: 20px; border: 2px solid rgba(0,255,65,0.3);">
+            <h4 style="color: #00ff41; text-shadow: 0 0 20px #00ff41; margin-bottom: 1rem;">
+              🎉 SIMULACIÓN COMPLETADA CON ÉXITO 🎉
+            </h4>
+            <div>
+              <i class="bi bi-check-circle-fill" style="font-size: 3rem; color: #00ff41; animation: pulse-glow 2s infinite;"></i>
+            </div>
+          </div>
         `;
+        
         resultDiv.innerHTML = html;
+        
+        // Play success sound sequence
+        playEpicSound(800, 0.3, 'sine');
+        setTimeout(() => playEpicSound(1000, 0.3, 'sine'), 200);
+        setTimeout(() => playEpicSound(1200, 0.5, 'sine'), 400);
+        
+        // Add sound effects to new elements
+        resultDiv.querySelectorAll('.sound-trigger').forEach(element => {
+          element.addEventListener('mouseenter', () => {
+            playHoverSound();
+          });
+        });
+        
       } catch (err) {
+        // EPIC CONNECTION ERROR
         resultDiv.innerHTML = `
           <h5 class="card-title">
             <i class="bi bi-graph-up text-success"></i>
-            📊 Resultados de la Simulación
+            📊 PANEL DE RESULTADOS ÉPICOS
           </h5>
           <div class="alert alert-danger">
-            <i class="bi bi-wifi-off me-2"></i>
-            Error de conexión: ${err.message}
+            <div style="text-align: center; margin-bottom: 1rem;">
+              <i class="bi bi-wifi-off" style="font-size: 3rem; color: #ff0080; animation: pulse-glow 1s infinite;"></i>
+            </div>
+            <h5 style="text-align: center; color: #ff0080;">🔌 CONEXIÓN PERDIDA EN EL CIBERESPACIO 🔌</h5>
+            <p style="text-align: center; margin: 0;">Error: ${err.message}</p>
           </div>
         `;
+        playExplosionSound();
       }
     });
+    
+    // EPIC SCROLL ANIMATIONS
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all cards for scroll animations
+    document.querySelectorAll('.card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(50px)';
+      card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      observer.observe(card);
+    });
+    
+    // EPIC TYPING EFFECT FOR HERO
+    function typeText(element, text, speed = 100) {
+      element.innerHTML = '';
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i < text.length) {
+          element.innerHTML += text.charAt(i);
+          i++;
+        } else {
+          clearInterval(timer);
+        }
+      }, speed);
+    }
+    
+    // Initialize epic effects
+    window.addEventListener('load', () => {
+      // Add some initial epic sounds
+      setTimeout(() => playLaserSound(), 1000);
+      setTimeout(() => playEpicSound(1500, 0.5, 'sine'), 2000);
+    });
+    
+    // Add random laser effects
+    setInterval(() => {
+      if (Math.random() < 0.1) { // 10% chance every interval
+        playEpicSound(Math.random() * 1000 + 500, 0.2, 'sawtooth');
+      }
+    }, 3000);
   </script>
 </body>
 </html>
