@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador Energético</title>
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeoY9a6ZQZ1f7QZ9KKm5+qk5iRa9jUM5VnsBfZxOGx+Vf5F2"
+    crossorigin="anonymous">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      height: 350px;
+      position: relative;
+      color: #fff;
+      border-radius: 0 0 30px 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    
+    .hero-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 0 0 30px 30px;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      margin-bottom: 1rem;
+    }
+    
+    .hero .lead {
+      font-size: 1.4rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    
+    .main-container {
+      margin-top: -50px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.95);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .card-title {
+      color: #2c3e50;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: #34495e;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e8ecef;
+      border-radius: 12px;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+      background: rgba(255,255,255,0.9);
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      background: #fff;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 15px;
+      padding: 15px 30px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+    
+    .result-card {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+    
+    .result-card .card-title {
+      color: white;
+    }
+    
+    .list-group-item {
+      border: none;
+      border-radius: 12px !important;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(10px);
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+      background: rgba(255,255,255,1);
+      transform: translateX(5px);
+    }
+    
+    .cost-item {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+    
+    .impact-item {
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    }
+    
+    .loading-spinner {
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .alert {
+      border: none;
+      border-radius: 15px;
+      font-weight: 500;
+    }
+    
+    .floating-icon {
+      position: absolute;
+      opacity: 0.1;
+      font-size: 8rem;
+      color: white;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .icon-1 { top: 20%; left: 10%; animation-delay: 0s; }
+    .icon-2 { top: 60%; right: 15%; animation-delay: 2s; }
+    .icon-3 { bottom: 20%; left: 20%; animation-delay: 4s; }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero mb-5">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="display-4">⚡ Simulador Energético 🏢</h1>
+      <p class="lead">Calcula costes e impacto de datacenters y centrales eléctricas</p>
+    </div>
+    <!-- Floating Icons -->
+    <i class="bi bi-lightning-fill floating-icon icon-1"></i>
+    <i class="bi bi-building floating-icon icon-2"></i>
+    <i class="bi bi-gear-fill floating-icon icon-3"></i>
+  </section>
+
+  <div class="container main-container">
+    <div class="row">
+      <!-- Form Column -->
+      <div class="col-lg-5 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-sliders text-primary"></i>
+              Parámetros de Simulación
+            </h5>
+            <form id="sim-form" class="row g-3">
+              <div class="col-12">
+                <label for="pais" class="form-label">
+                  <i class="bi bi-globe-americas text-success"></i>
+                  País
+                </label>
+                <select id="pais" name="pais" class="form-select" required>
+                  <option value="">🌍 -- Selecciona un país --</option>
+                  {% for p in paises %}
+                  <option value="{{ p }}" {% if datos and datos.pais == p %}selected{% endif %}>{{ p }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="year" class="form-label">
+                  <i class="bi bi-calendar3 text-info"></i>
+                  Año
+                </label>
+                <input type="number" id="year" name="year" class="form-control" value="2020" min="1900" max="2100" required>
+              </div>
+              <div class="col-md-6">
+                <label for="datacenters" class="form-label">
+                  <i class="bi bi-hdd-rack text-primary"></i>
+                  # Datacenters
+                </label>
+                <input type="number" id="datacenters" name="datacenters" class="form-control" value="0" min="0">
+              </div>
+              <div class="col-md-6">
+                <label for="dc_capacity_kw" class="form-label">
+                  <i class="bi bi-cpu text-warning"></i>
+                  Capacidad DC (kW)
+                </label>
+                <input type="number" id="dc_capacity_kw" name="dc_capacity_kw" class="form-control" value="1000" min="0" step="any">
+              </div>
+              <div class="col-md-6">
+                <label for="powerplants" class="form-label">
+                  <i class="bi bi-building text-danger"></i>
+                  # Centrales
+                </label>
+                <input type="number" id="powerplants" name="powerplants" class="form-control" value="0" min="0">
+              </div>
+              <div class="col-md-6">
+                <label for="pp_capacity_kw" class="form-label">
+                  <i class="bi bi-lightning-charge text-success"></i>
+                  Capacidad PP (kW)
+                </label>
+                <input type="number" id="pp_capacity_kw" name="pp_capacity_kw" class="form-control" value="500000" min="0" step="any">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="bi bi-play-fill me-2"></i>
+                  ✨ Simular Ahora ✨
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Column -->
+      <div class="col-lg-7">
+        <div id="result" class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title">
+              <i class="bi bi-graph-up text-success"></i>
+              📊 Resultados de la Simulación
+            </h5>
+            <div class="pre-scrollable text-muted text-center py-5">
+              <i class="bi bi-info-circle-fill display-1 text-muted mb-3"></i>
+              <h6>💡 Introduce los datos y haz clic en "Simular"</h6>
+              <p class="small">Los resultados aparecerán aquí instantáneamente</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+q2m5Z5U5Eym4u0s5YFjK+p0I7wYF"
+    crossorigin="anonymous"></script>
+  <script>
+    document.getElementById('sim-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const form = e.target;
+      const data = {
+        pais: form.pais.value,
+        year: parseInt(form.year.value, 10),
+        datacenters: parseInt(form.datacenters.value, 10),
+        dc_capacity_kw: parseFloat(form.dc_capacity_kw.value),
+        powerplants: parseInt(form.powerplants.value, 10),
+        pp_capacity_kw: parseFloat(form.pp_capacity_kw.value)
+      };
+
+      const resultDiv = document.getElementById('result').querySelector('.card-body');
+      resultDiv.innerHTML = `
+        <h5 class="card-title">
+          <i class="bi bi-graph-up text-success"></i>
+          📊 Resultados de la Simulación
+        </h5>
+        <div class="text-center text-primary py-5">
+          <i class="bi bi-arrow-clockwise loading-spinner display-1 mb-3"></i>
+          <h5>⚡ Simulando...</h5>
+          <p class="text-muted">Procesando los datos energéticos</p>
+        </div>
+      `;
+
+      try {
+        const resp = await fetch('/api/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const json = await resp.json();
+
+        if (!resp.ok) {
+          resultDiv.innerHTML = `
+            <h5 class="card-title">
+              <i class="bi bi-graph-up text-success"></i>
+              📊 Resultados de la Simulación
+            </h5>
+            <div class="alert alert-danger">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              ${json.error || 'Error desconocido'}
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <h5 class="card-title">
+            <i class="bi bi-graph-up text-success"></i>
+            📊 Resultados de la Simulación
+          </h5>
+          <div class="row mb-4">
+            <div class="col-12">
+              <h5 class="text-primary mb-3">
+                <i class="bi bi-currency-dollar"></i> 💰 Análisis de Costes
+              </h5>
+              <ul class="list-group">
+                <li class="list-group-item cost-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-hdd-rack text-primary me-2"></i><strong>Datacenters</strong></span>
+                  <span class="badge bg-primary rounded-pill fs-6">${json.coste_datacenters.toFixed(2)} €</span>
+                </li>
+                <li class="list-group-item cost-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-building text-danger me-2"></i><strong>Centrales Eléctricas</strong></span>
+                  <span class="badge bg-danger rounded-pill fs-6">${json.coste_powerplants.toFixed(2)} €</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-12">
+              <h5 class="text-success mb-3">
+                <i class="bi bi-lightning-fill"></i> ⚡ Impacto Energético
+              </h5>
+              <ul class="list-group">
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-arrow-down-circle text-danger me-2"></i><strong>Consumo DC (MWh)</strong></span>
+                  <span class="badge bg-warning rounded-pill fs-6">${json.impact.datacenters_mwh.toFixed(2)}</span>
+                </li>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-arrow-up-circle text-success me-2"></i><strong>Producción PP (MWh)</strong></span>
+                  <span class="badge bg-success rounded-pill fs-6">${json.impact.powerplants_mwh.toFixed(2)}</span>
+                </li>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-graph-up text-info me-2"></i><strong>Balance Neto (MWh)</strong></span>
+                  <span class="badge bg-info rounded-pill fs-6">${json.impact.net_mwh.toFixed(2)}</span>
+                </li>
+                <li class="list-group-item impact-item d-flex justify-content-between align-items-center">
+                  <span><i class="bi bi-speedometer2 text-secondary me-2"></i><strong>Balance Neto (PJ)</strong></span>
+                  <span class="badge bg-secondary rounded-pill fs-6">${json.impact.net_pj.toExponential(2)}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        `;
+        resultDiv.innerHTML = html;
+      } catch (err) {
+        resultDiv.innerHTML = `
+          <h5 class="card-title">
+            <i class="bi bi-graph-up text-success"></i>
+            📊 Resultados de la Simulación
+          </h5>
+          <div class="alert alert-danger">
+            <i class="bi bi-wifi-off me-2"></i>
+            Error de conexión: ${err.message}
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
